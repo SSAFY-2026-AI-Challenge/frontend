@@ -1,57 +1,27 @@
-'use client';
+import LoginForm from '@/features/auth/components/LoginForm';
 
-import { FormEvent, useState } from 'react';
-
-export default function LoginForm() {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    // TODO: 로그인 API 명세 확정 후 연결
-  };
-
+export default function HomePage() {
   return (
-    <form onSubmit={handleSubmit} className="rounded-lg border p-5">
-      <div className="mb-5 flex h-24 items-center justify-center bg-gray-50">
-        <span className="text-sm text-gray-400">
-          학생 캐릭터 일러스트
-        </span>
-      </div>
+    <main className="flex min-h-screen items-center justify-center px-4">
+      <section className="w-full max-w-sm">
+        <header className="mb-8 text-center">
+          <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-md border font-bold">
+            ₩
+          </div>
 
-      <div className="mb-4">
-        <h2 className="font-semibold">시작</h2>
+          <h1 className="text-2xl font-bold">금배금배</h1>
 
-        <p className="mt-1 text-sm text-gray-500">
-          직업을 얻고 월급을 받아 소득을 관리해요.
-        </p>
-      </div>
+          <p className="mt-2 text-sm text-gray-500">
+            학급 단위 가상 화폐를 통해 배우는 초등 경제 교육 플랫폼
+          </p>
+        </header>
 
-      <div className="flex flex-col gap-2">
-        <input
-          type="text"
-          value={id}
-          onChange={(event) => setId(event.target.value)}
-          placeholder="아이디"
-          className="rounded-md border px-3 py-2"
-        />
+        <LoginForm />
 
-        <input
-          type="password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          placeholder="비밀번호"
-          className="rounded-md border px-3 py-2"
-        />
-
-        <button
-          type="submit"
-          className="mt-2 rounded-md bg-gray-900 px-4 py-2 font-medium text-white"
-        >
-          로그인
-        </button>
-      </div>
-    </form>
+        <footer className="mt-8 text-center text-xs text-gray-400">
+          © 2026 우리반 경제생활 MVP. All Rights Reserved.
+        </footer>
+      </section>
+    </main>
   );
 }

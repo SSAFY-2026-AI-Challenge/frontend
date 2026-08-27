@@ -19,7 +19,7 @@ export default function HomePage() {
         <LoginForm />
 
         <footer className="mt-8 text-center text-xs text-gray-400">
-          © 2026 우리반 경제생활 MVP. All Rights Reserved.
+          © 2026 우리반 경제생활 MVP.
         </footer>
       </section>
     </main>

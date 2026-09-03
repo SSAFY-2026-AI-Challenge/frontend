@@ -105,40 +105,20 @@ export default function SavingsPage() {
   ];
 
   const maxTrend = Math.max(...trends.map((t) => t.amount), 3000);
+  const averageTrend = trends.length
+    ? Math.round(
+        trends.reduce((sum, trend) => sum + trend.amount, 0) / trends.length,
+      )
+    : 0;
 
   return (
     <div className="mx-auto max-w-6xl p-6 md:p-8">
-      {/* 1. 상단 헤더 및 서브 탭 전환 바 */}
-      {/* 1. 상단 헤더 및 서브 탭 전환 바 */}
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-4 relative z-30">
+      {/* 1. 상단 헤더 */}
+      <div className="mb-2">
         <PageHeader
           badgeText={student.classRoom}
           title={currentTab === 'saving' ? '저축하기' : '내 통장 확인'}
         />
-
-        {/* 탭 토글 (z-30으로 상단 우선 노출) */}
-        <div className="flex items-center gap-1 rounded-xl bg-gray-100 p-1 border border-gray-200 relative z-30">
-          <button
-            onClick={() => setTab('saving')}
-            className={`rounded-lg px-4 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-              currentTab === 'saving'
-                ? 'bg-[#35C884] text-white shadow-xs'
-                : 'text-gray-500 hover:text-gray-800'
-            }`}
-          >
-            저축하기
-          </button>
-          <button
-            onClick={() => setTab('accounts')}
-            className={`rounded-lg px-4 py-1.5 text-xs font-bold transition-all cursor-pointer ${
-              currentTab === 'accounts'
-                ? 'bg-[#35C884] text-white shadow-xs'
-                : 'text-gray-500 hover:text-gray-800'
-            }`}
-          >
-            내 통장 확인
-          </button>
-        </div>
       </div>
 
       {/* 헤드라인 */}
@@ -244,7 +224,7 @@ export default function SavingsPage() {
             {/* 이번 달 저축 */}
             <Card className="flex items-center justify-between p-5">
               <div>
-                <p className="text-base font-bold text-gray-800 mb-2">
+                <p className="text-lg font-bold text-gray-800 mb-2">
                   이번 달 저축
                 </p>
                 <Badge
@@ -260,7 +240,7 @@ export default function SavingsPage() {
             {/* 월 평균 저축 */}
             <Card className="flex items-center justify-between p-5">
               <div>
-                <p className="text-base font-bold text-gray-800 mb-2">
+                <p className="text-lg font-bold text-gray-800 mb-2">
                   월 평균 저축
                 </p>
                 <Badge
@@ -276,7 +256,7 @@ export default function SavingsPage() {
             {/* 저축률 */}
             <Card className="flex items-center justify-between p-5">
               <div>
-                <p className="text-base font-bold text-gray-800 mb-2">저축률</p>
+                <p className="text-lg font-bold text-gray-800 mb-2">저축률</p>
                 <Badge
                   variant="green-pill"
                   className="text-sm px-3 py-1 font-bold"
@@ -293,13 +273,13 @@ export default function SavingsPage() {
             {/* 나의 저축 목표 목록 */}
             <Card className="flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-base font-bold text-gray-900">
+                <div className="mb-5">
+                  <h3 className="text-xl font-bold text-gray-900">
                     나의 저축 목표 목록
                   </h3>
-                  <span className="text-xs text-gray-400">
+                  <p className="mt-1 text-[11px] text-gray-400">
                     예상 달성일: 2026.05.15
-                  </span>
+                  </p>
                 </div>
 
                 <div className="mb-6">
@@ -345,43 +325,49 @@ export default function SavingsPage() {
             {/* 월별 저축 추이 */}
             <Card className="flex flex-col justify-between">
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-base font-bold text-gray-900">
-                    월별 저축 추이
-                  </h3>
-                  <span className="text-xs text-gray-400">최근 6개월 기준</span>
-                </div>
-
-                <div className="flex items-center justify-between mb-4">
-                  <span className="inline-flex rounded-lg bg-[#35C884] text-white text-xs font-bold px-3 py-1">
-                    평균 1,867 미소
-                  </span>
-                  <CloudCharacterGraphic className="h-10 w-14" />
+                <div className="relative h-28">
+                  <div className="relative z-20">
+                    <h3 className="text-xl font-bold text-gray-900">
+                      월별 저축 추이
+                    </h3>
+                    <p className="mt-1 text-[11px] text-gray-400">
+                      최근 6개월 기준
+                    </p>
+                    <span className="mt-2 inline-flex rounded-lg bg-[#35C884] px-3 py-1 text-xs font-bold text-white">
+                      평균 {averageTrend.toLocaleString()} 미소
+                    </span>
+                  </div>
+                  <CloudCharacterGraphic className="pointer-events-none absolute bottom-[25px] left-[74%] z-0 h-36 w-52 -translate-x-1/2 sm:bottom-[70px] sm:h-30 sm:w-56" />
                 </div>
 
                 {/* 막대 차트 영역 */}
-                <div className="flex items-end justify-between gap-2 pt-8 pb-2 px-2 h-44 border-b border-gray-100">
-                  {trends.map((item, idx) => {
-                    const heightPercent = Math.round(
-                      (item.amount / maxTrend) * 100,
-                    );
-                    return (
-                      <div
-                        key={idx}
-                        className="flex flex-col items-center flex-1 gap-2 group"
-                      >
-                        {/* 말풍선 라벨 */}
-                        <span className="text-[10px] font-bold bg-white text-gray-700 px-1.5 py-0.5 rounded-md border border-gray-200 shadow-2xs whitespace-nowrap">
-                          {item.amount}
-                        </span>
-                        {/* 막대 */}
+                <div className="relative z-10">
+                  <div className="grid h-40 grid-cols-6 items-end gap-2 rounded-2xl bg-[#EBF9F2] px-3 pb-3 pt-5">
+                    {trends.map((item, idx) => {
+                      const heightPercent = Math.round(
+                        (item.amount / maxTrend) * 100,
+                      );
+                      return (
                         <div
-                          className="w-full max-w-[34px] rounded-t-lg bg-[#35C884] transition-all group-hover:bg-[#2EB374]"
-                          style={{ height: `${heightPercent}%` }}
-                        />
-                      </div>
-                    );
-                  })}
+                          key={idx}
+                          className="group flex h-full min-w-0 flex-col items-center justify-end gap-1.5"
+                        >
+                          <span className="rounded-md bg-white/90 px-1.5 py-0.5 text-[9px] font-bold text-[#0B654B] shadow-xs whitespace-nowrap">
+                            {item.amount.toLocaleString()}
+                          </span>
+                          <div className="flex h-24 w-full items-end justify-center">
+                            <div
+                              className="w-full max-w-[38px] rounded-t-lg bg-[#35C884] shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] transition-all group-hover:bg-[#2EB374]"
+                              style={{
+                                height: `${Math.max(heightPercent, 8)}%`,
+                              }}
+                              title={`${item.yearMonth}: ${item.amount.toLocaleString()} 미소`}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </Card>
@@ -390,7 +376,7 @@ export default function SavingsPage() {
           {/* AI 맞춤 제안 */}
           <div className="relative rounded-2xl border border-[#35C884]/40 bg-[#E8F8F0]/40 p-6">
             <div className="max-w-2xl">
-              <h3 className="text-base font-bold text-[#0B654B] mb-2">
+              <h3 className="text-xl font-bold text-[#0B654B] mb-2">
                 AI 맞춤 제안
               </h3>
               <p className="text-sm text-gray-800 leading-relaxed mb-4">
@@ -492,7 +478,7 @@ export default function SavingsPage() {
             <Card className="flex flex-col justify-between p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">
                     {accountsData?.[0]?.accountName || '주 거래 통장'}
                   </h3>
                   <p className="text-xs text-gray-400 mb-3">
@@ -514,7 +500,7 @@ export default function SavingsPage() {
             <Card className="flex flex-col justify-between p-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">
                     {accountsData?.[1]?.accountName || '홍길동의 적금 통장'}
                   </h3>
                   <p className="text-xs text-gray-400 mb-3">
@@ -537,9 +523,7 @@ export default function SavingsPage() {
           {/* AI 분석 박스 */}
           <div className="relative rounded-2xl border border-[#35C884]/40 bg-[#E8F8F0]/40 p-6">
             <div className="max-w-2xl">
-              <h3 className="text-base font-bold text-[#0B654B] mb-2">
-                AI 분석
-              </h3>
+              <h3 className="text-xl font-bold text-[#0B654B] mb-2">AI 분석</h3>
               <p className="text-sm text-gray-800 leading-relaxed">
                 이달 소비 추세로 볼 때, 25일에 월급이 들어오면{' '}
                 <span className="font-bold text-[#0B654B]">₩850,000</span> 저축
@@ -575,7 +559,7 @@ export default function SavingsPage() {
         <Card className="p-6">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-gray-900">
+              <h3 className="text-xl font-bold text-gray-900">
                 거래 내역 (미소 화폐)
               </h3>
               <span className="text-xs text-gray-400">

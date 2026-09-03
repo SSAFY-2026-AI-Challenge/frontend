@@ -12,6 +12,17 @@
   --color-border: #e5e7eb;
 }
 
+/* 대시보드 본문: 위 흰색 → F7F8F9 → 아래 F4FFD7 */
+.bg-dashboard {
+  background: linear-gradient(180deg, #ffffff 0%, #f7f8f9 42%, #f4ffd7 100%);
+}
+
+/* 히어로 카드: 왼쪽 34C37D(11%) → 오른쪽은 같은 초록을 살짝만 밝게 */
+.bg-hero-card {
+  background-color: #34c37d;
+  background-image: linear-gradient(90deg, #34c37d 11%, #a4e8a1 90%);
+}
+
 html,
 body {
   min-height: 100%;

@@ -30,7 +30,9 @@ export default function SavingsPage() {
   const { currentTab, setTab } = useSavingsStore();
   const { selectedYear, selectedMonth } = useMonthStore();
 
-  const [selectedTxType, setSelectedTxType] = useState<string | undefined>(undefined);
+  const [selectedTxType, setSelectedTxType] = useState<string | undefined>(
+    undefined,
+  );
   const [txPage, setTxPage] = useState(1);
 
   const { data: summary } = useSavingsSummary();
@@ -74,7 +76,7 @@ export default function SavingsPage() {
       {
         onSuccess: () => {
           setDepositSuccessMsg(
-            `${amount.toLocaleString()} 미소가 성공적으로 저축되었습니다!`
+            `${amount.toLocaleString()} 미소가 성공적으로 저축되었습니다!`,
           );
           setTimeout(() => {
             setDepositSuccessMsg('');
@@ -89,7 +91,7 @@ export default function SavingsPage() {
               : '저축 이체 중 오류가 발생했습니다.';
           setDepositErrorMsg(msg);
         },
-      }
+      },
     );
   };
 
@@ -153,8 +155,8 @@ export default function SavingsPage() {
       {/* ======================================================== */}
       {currentTab === 'saving' && (
         <div className="space-y-6 relative">
-          {/* 오른쪽 위: 카드 상단 테두리에 손을 얹고 올라타 있는 화분 캐릭터 */}
-          <div className="hidden sm:flex absolute right-6 md:right-10 -top-[115px] md:-top-[135px] z-10 pointer-events-none flex-col items-center">
+          {/* 화분 - 카드 뒤 */}
+          <div className="hidden sm:block absolute right-6 md:right-10 -top-[125px] md:-top-[135px] z-0 pointer-events-none">
             <div className="relative h-28 w-28 md:h-36 md:w-36">
               <Image
                 src="/images/characters/pot.svg"
@@ -162,10 +164,18 @@ export default function SavingsPage() {
                 width={144}
                 height={144}
                 priority
-                className="h-full w-full object-contain"
+                className="h-full w-full object-contain translate-y-[22px]"
               />
-              {/* 두 손 (hand.svg) - 카드의 상단 테두리를 쥐고 있는 효과 */}
-              <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-[68px] md:w-[78px] flex justify-between z-20">
+            </div>
+          </div>
+
+          {/* 카드 */}
+          <div className="relative z-10">{/* 카드 내용 */}</div>
+
+          {/* 손 - 카드 앞 */}
+          <div className="hidden sm:flex absolute right-6 md:right-10 -top-[125px] md:-top-[135px] z-20 pointer-events-none">
+            <div className="relative h-28 w-28 md:h-36 md:w-36">
+              <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-[85px] md:w-[95px] flex justify-between">
                 <div className="h-6 w-6 md:h-7 md:w-7 relative -rotate-6">
                   <Image
                     src="/images/characters/hand.svg"
@@ -175,6 +185,7 @@ export default function SavingsPage() {
                     className="h-full w-full object-contain drop-shadow-xs"
                   />
                 </div>
+
                 <div className="h-6 w-6 md:h-7 md:w-7 relative rotate-6">
                   <Image
                     src="/images/characters/hand.svg"
@@ -193,7 +204,9 @@ export default function SavingsPage() {
             <div className="flex items-center gap-5">
               <CoinStackGraphic className="h-20 w-20 shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-gray-500 mb-1">나의 총 저축 금액</p>
+                <p className="text-sm font-semibold text-gray-500 mb-1">
+                  나의 총 저축 금액
+                </p>
                 <div className="mb-2 flex flex-wrap items-center text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
                   <span>나의 총 자산 합계는</span>
                   <span className="mx-2.5 inline-flex items-center rounded-xl bg-[#35C884] px-3.5 py-0.5 text-xl md:text-2xl font-black text-white shadow-sm">
@@ -231,8 +244,13 @@ export default function SavingsPage() {
             {/* 이번 달 저축 */}
             <Card className="flex items-center justify-between p-5">
               <div>
-                <p className="text-base font-bold text-gray-800 mb-2">이번 달 저축</p>
-                <Badge variant="green-pill" className="text-sm px-3 py-1 font-bold">
+                <p className="text-base font-bold text-gray-800 mb-2">
+                  이번 달 저축
+                </p>
+                <Badge
+                  variant="green-pill"
+                  className="text-sm px-3 py-1 font-bold"
+                >
                   +{(summary?.monthlySavings || 2500).toLocaleString()} 미소
                 </Badge>
               </div>
@@ -242,8 +260,13 @@ export default function SavingsPage() {
             {/* 월 평균 저축 */}
             <Card className="flex items-center justify-between p-5">
               <div>
-                <p className="text-base font-bold text-gray-800 mb-2">월 평균 저축</p>
-                <Badge variant="green-pill" className="text-sm px-3 py-1 font-bold">
+                <p className="text-base font-bold text-gray-800 mb-2">
+                  월 평균 저축
+                </p>
+                <Badge
+                  variant="green-pill"
+                  className="text-sm px-3 py-1 font-bold"
+                >
                   {(summary?.averageSavings || 1800).toLocaleString()} 미소
                 </Badge>
               </div>
@@ -254,7 +277,10 @@ export default function SavingsPage() {
             <Card className="flex items-center justify-between p-5">
               <div>
                 <p className="text-base font-bold text-gray-800 mb-2">저축률</p>
-                <Badge variant="green-pill" className="text-sm px-3 py-1 font-bold">
+                <Badge
+                  variant="green-pill"
+                  className="text-sm px-3 py-1 font-bold"
+                >
                   {summary?.savingsRate || 32}%
                 </Badge>
               </div>
@@ -268,8 +294,12 @@ export default function SavingsPage() {
             <Card className="flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-base font-bold text-gray-900">나의 저축 목표 목록</h3>
-                  <span className="text-xs text-gray-400">예상 달성일: 2026.05.15</span>
+                  <h3 className="text-base font-bold text-gray-900">
+                    나의 저축 목표 목록
+                  </h3>
+                  <span className="text-xs text-gray-400">
+                    예상 달성일: 2026.05.15
+                  </span>
                 </div>
 
                 <div className="mb-6">
@@ -296,7 +326,8 @@ export default function SavingsPage() {
 
                 <div className="flex items-center justify-between text-xs font-bold mt-2">
                   <span className="text-[#0B654B]">
-                    현재 {(summary?.totalSavings || 15200).toLocaleString()} 미소
+                    현재 {(summary?.totalSavings || 15200).toLocaleString()}{' '}
+                    미소
                   </span>
                   <span className="text-[#35C884]">목표 ₩30,000 미소</span>
                 </div>
@@ -304,7 +335,9 @@ export default function SavingsPage() {
 
               <div className="mt-8 pt-4 border-t border-gray-100">
                 <p className="text-xs text-gray-500">
-                  현재 속도를 유지하면 목표일보다 <span className="font-bold text-[#0B654B]">2주 일찍</span> 달성 가능해요!
+                  현재 속도를 유지하면 목표일보다{' '}
+                  <span className="font-bold text-[#0B654B]">2주 일찍</span>{' '}
+                  달성 가능해요!
                 </p>
               </div>
             </Card>
@@ -313,7 +346,9 @@ export default function SavingsPage() {
             <Card className="flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-base font-bold text-gray-900">월별 저축 추이</h3>
+                  <h3 className="text-base font-bold text-gray-900">
+                    월별 저축 추이
+                  </h3>
                   <span className="text-xs text-gray-400">최근 6개월 기준</span>
                 </div>
 
@@ -327,9 +362,14 @@ export default function SavingsPage() {
                 {/* 막대 차트 영역 */}
                 <div className="flex items-end justify-between gap-2 pt-8 pb-2 px-2 h-44 border-b border-gray-100">
                   {trends.map((item, idx) => {
-                    const heightPercent = Math.round((item.amount / maxTrend) * 100);
+                    const heightPercent = Math.round(
+                      (item.amount / maxTrend) * 100,
+                    );
                     return (
-                      <div key={idx} className="flex flex-col items-center flex-1 gap-2 group">
+                      <div
+                        key={idx}
+                        className="flex flex-col items-center flex-1 gap-2 group"
+                      >
                         {/* 말풍선 라벨 */}
                         <span className="text-[10px] font-bold bg-white text-gray-700 px-1.5 py-0.5 rounded-md border border-gray-200 shadow-2xs whitespace-nowrap">
                           {item.amount}
@@ -350,11 +390,15 @@ export default function SavingsPage() {
           {/* AI 맞춤 제안 */}
           <div className="relative rounded-2xl border border-[#35C884]/40 bg-[#E8F8F0]/40 p-6">
             <div className="max-w-2xl">
-              <h3 className="text-base font-bold text-[#0B654B] mb-2">AI 맞춤 제안</h3>
+              <h3 className="text-base font-bold text-[#0B654B] mb-2">
+                AI 맞춤 제안
+              </h3>
               <p className="text-sm text-gray-800 leading-relaxed mb-4">
-                현재 저축 패턴을 분석한 결과, 매주 수요일에 가장 많이 저축하는 경향이 있습니다.
+                현재 저축 패턴을 분석한 결과, 매주 수요일에 가장 많이 저축하는
+                경향이 있습니다.
                 <br />
-                자동 저축을 수요일에 설정하면 목표 달성률이 <span className="font-bold text-[#0B654B]">25%</span> 향상됩니다
+                자동 저축을 수요일에 설정하면 목표 달성률이{' '}
+                <span className="font-bold text-[#0B654B]">25%</span> 향상됩니다
               </p>
 
               <div className="rounded-xl bg-white/90 border border-emerald-200/80 p-3 text-xs text-gray-700 font-medium">
@@ -421,7 +465,9 @@ export default function SavingsPage() {
             <div className="flex items-center gap-5">
               <CoinStackGraphic className="h-20 w-20 shrink-0" />
               <div>
-                <p className="text-sm font-semibold text-gray-500 mb-1">3월 급여 명세서</p>
+                <p className="text-sm font-semibold text-gray-500 mb-1">
+                  3월 급여 명세서
+                </p>
                 <div className="mb-2 flex flex-wrap items-center text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
                   <span>나의 총 자산 합계는</span>
                   <span className="mx-2.5 inline-flex items-center rounded-xl bg-[#35C884] px-3.5 py-0.5 text-xl md:text-2xl font-black text-white shadow-sm">
@@ -482,7 +528,8 @@ export default function SavingsPage() {
               </div>
 
               <div className="mt-6 rounded-xl border border-[#35C884] bg-white py-3 text-center text-base font-extrabold text-[#0B654B]">
-                ₩{(accountsData?.[1]?.balance || 12800000).toLocaleString()} 미소
+                ₩{(accountsData?.[1]?.balance || 12800000).toLocaleString()}{' '}
+                미소
               </div>
             </Card>
           </div>
@@ -490,11 +537,19 @@ export default function SavingsPage() {
           {/* AI 분석 박스 */}
           <div className="relative rounded-2xl border border-[#35C884]/40 bg-[#E8F8F0]/40 p-6">
             <div className="max-w-2xl">
-              <h3 className="text-base font-bold text-[#0B654B] mb-2">AI 분석</h3>
+              <h3 className="text-base font-bold text-[#0B654B] mb-2">
+                AI 분석
+              </h3>
               <p className="text-sm text-gray-800 leading-relaxed">
-                이달 소비 추세로 볼 때, 25일에 월급이 들어오면 <span className="font-bold text-[#0B654B]">₩850,000</span> 저축 가능합니다.
+                이달 소비 추세로 볼 때, 25일에 월급이 들어오면{' '}
+                <span className="font-bold text-[#0B654B]">₩850,000</span> 저축
+                가능합니다.
                 <br />
-                신한 통장에서 카카오 세이프박스로 자동이체를 설정하면 목표 달성률이 <span className="font-bold text-[#0B654B]">15%</span> 향상됩니다
+                신한 통장에서 카카오 세이프박스로 자동이체를 설정하면 목표
+                달성률이 <span className="font-bold text-[#0B654B]">
+                  15%
+                </span>{' '}
+                향상됩니다
               </p>
             </div>
 
@@ -518,149 +573,166 @@ export default function SavingsPage() {
       <div className="mt-8 space-y-6">
         {/* 거래 내역 (미소 화폐) 표 카드 */}
         <Card className="p-6">
-            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-              <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-gray-900">거래 내역 (미소 화폐)</h3>
-                <span className="text-xs text-gray-400">
-                  총 {transactionsData?.totalCount ?? transactionsData?.items.length ?? 0}건
-                </span>
-              </div>
-
-              {/* 필터 탭: 전체 / 지출 / 수입 */}
-              <div className="flex items-center gap-1 rounded-xl bg-gray-100 p-1 text-xs font-semibold">
-                <button
-                  onClick={() => { setSelectedTxType(undefined); setTxPage(1); }}
-                  className={`rounded-lg px-2.5 py-1 transition-all cursor-pointer ${
-                    selectedTxType === undefined
-                      ? 'bg-white font-bold text-gray-900 shadow-xs'
-                      : 'text-gray-500 hover:text-gray-900'
-                  }`}
-                >
-                  전체
-                </button>
-                <button
-                  onClick={() => { setSelectedTxType('EXPENSE'); setTxPage(1); }}
-                  className={`rounded-lg px-2.5 py-1 transition-all cursor-pointer ${
-                    selectedTxType === 'EXPENSE'
-                      ? 'bg-white font-bold text-red-600 shadow-xs'
-                      : 'text-gray-500 hover:text-gray-900'
-                  }`}
-                >
-                  지출
-                </button>
-                <button
-                  onClick={() => { setSelectedTxType('INCOME'); setTxPage(1); }}
-                  className={`rounded-lg px-2.5 py-1 transition-all cursor-pointer ${
-                    selectedTxType === 'INCOME'
-                      ? 'bg-white font-bold text-emerald-600 shadow-xs'
-                      : 'text-gray-500 hover:text-gray-900'
-                  }`}
-                >
-                  수입
-                </button>
-              </div>
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-bold text-gray-900">
+                거래 내역 (미소 화폐)
+              </h3>
+              <span className="text-xs text-gray-400">
+                총{' '}
+                {transactionsData?.totalCount ??
+                  transactionsData?.items.length ??
+                  0}
+                건
+              </span>
             </div>
 
-            {isTxLoading ? (
-              <div className="py-12 text-center text-xs text-gray-400">
-                거래 내역을 불러오는 중입니다...
-              </div>
-            ) : (!transactionsData?.items || transactionsData.items.length === 0) ? (
-              <div className="py-12 text-center text-xs text-gray-400">
-                해당 기간의 거래 내역이 없습니다.
-              </div>
-            ) : (
-              <div className="flex flex-col divide-y divide-gray-100">
-                {(transactionsData.items || []).map((tx) => {
-                  const isPositive = tx.amount > 0 || tx.type === 'INCOME';
-                  return (
-                    <div
-                      key={tx.id}
-                      className="flex flex-wrap items-center justify-between gap-3 py-3.5 text-sm"
-                    >
-                      {/* 항목명 및 날짜 */}
-                      <div className="flex items-center gap-3 min-w-[200px] flex-1">
-                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gray-400" />
-                        <span className="font-semibold text-gray-800 truncate">
-                          {tx.description}
-                        </span>
-                        <span className="text-xs text-gray-400 shrink-0">
-                          {tx.occurredAt?.includes('T')
-                            ? `${tx.occurredAt.split('T')[0].slice(5)} ${tx.occurredAt.split('T')[1].slice(0, 5)}`
-                            : tx.occurredAt}
-                        </span>
-                      </div>
-
-                      {/* 잔액, 금액, 구분 배지 */}
-                      <div className="flex items-center gap-4 shrink-0">
-                        {tx.balanceAfter !== undefined && (
-                          <span className="text-xs text-gray-500 font-medium">
-                            {tx.balanceAfter.toLocaleString()} 미소
-                          </span>
-                        )}
-
-                        <Badge
-                          variant={isPositive ? 'green-pill' : 'danger-pill'}
-                          className="font-bold min-w-[80px] text-center"
-                        >
-                          {isPositive ? `+${Math.abs(tx.amount)}` : tx.amount} 미소
-                        </Badge>
-
-                        <Badge
-                          variant={isPositive ? 'blue-pill' : 'gray-pill'}
-                          className="font-bold w-12 text-center"
-                        >
-                          {isPositive ? '수입' : '지출'}
-                        </Badge>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* 페이징 네비게이션 */}
-            {transactionsData && transactionsData.totalCount > 20 && (
-              <div className="mt-4 flex items-center justify-center gap-2 pt-3 border-t border-gray-100">
-                <button
-                  disabled={txPage <= 1}
-                  onClick={() => setTxPage((p) => Math.max(1, p - 1))}
-                  className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-bold disabled:opacity-30 cursor-pointer"
-                >
-                  이전
-                </button>
-                <span className="text-xs text-gray-500 font-medium">
-                  {txPage} / {Math.ceil(transactionsData.totalCount / 20)}
-                </span>
-                <button
-                  disabled={txPage >= Math.ceil(transactionsData.totalCount / 20)}
-                  onClick={() => setTxPage((p) => p + 1)}
-                  className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-bold disabled:opacity-30 cursor-pointer"
-                >
-                  다음
-                </button>
-              </div>
-            )}
-          </Card>
-
-          {/* 하단 액션 버튼 2개 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button
-              variant="primary"
-              fullWidth
-              onClick={() => setTab('saving')}
-              className="py-3.5 text-base"
-            >
-              저축하러 가기
-            </Button>
-
-            <Link href="/credit-report" className="block w-full">
-              <Button variant="primary" fullWidth className="py-3.5 text-base">
-                계좌별 AI 상세 분석 시작하기
-              </Button>
-            </Link>
+            {/* 필터 탭: 전체 / 지출 / 수입 */}
+            <div className="flex items-center gap-1 rounded-xl bg-gray-100 p-1 text-xs font-semibold">
+              <button
+                onClick={() => {
+                  setSelectedTxType(undefined);
+                  setTxPage(1);
+                }}
+                className={`rounded-lg px-2.5 py-1 transition-all cursor-pointer ${
+                  selectedTxType === undefined
+                    ? 'bg-white font-bold text-gray-900 shadow-xs'
+                    : 'text-gray-500 hover:text-gray-900'
+                }`}
+              >
+                전체
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedTxType('EXPENSE');
+                  setTxPage(1);
+                }}
+                className={`rounded-lg px-2.5 py-1 transition-all cursor-pointer ${
+                  selectedTxType === 'EXPENSE'
+                    ? 'bg-white font-bold text-red-600 shadow-xs'
+                    : 'text-gray-500 hover:text-gray-900'
+                }`}
+              >
+                지출
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedTxType('INCOME');
+                  setTxPage(1);
+                }}
+                className={`rounded-lg px-2.5 py-1 transition-all cursor-pointer ${
+                  selectedTxType === 'INCOME'
+                    ? 'bg-white font-bold text-emerald-600 shadow-xs'
+                    : 'text-gray-500 hover:text-gray-900'
+                }`}
+              >
+                수입
+              </button>
+            </div>
           </div>
+
+          {isTxLoading ? (
+            <div className="py-12 text-center text-xs text-gray-400">
+              거래 내역을 불러오는 중입니다...
+            </div>
+          ) : !transactionsData?.items ||
+            transactionsData.items.length === 0 ? (
+            <div className="py-12 text-center text-xs text-gray-400">
+              해당 기간의 거래 내역이 없습니다.
+            </div>
+          ) : (
+            <div className="flex flex-col divide-y divide-gray-100">
+              {(transactionsData.items || []).map((tx) => {
+                const isPositive = tx.amount > 0 || tx.type === 'INCOME';
+                return (
+                  <div
+                    key={tx.id}
+                    className="flex flex-wrap items-center justify-between gap-3 py-3.5 text-sm"
+                  >
+                    {/* 항목명 및 날짜 */}
+                    <div className="flex items-center gap-3 min-w-[200px] flex-1">
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gray-400" />
+                      <span className="font-semibold text-gray-800 truncate">
+                        {tx.description}
+                      </span>
+                      <span className="text-xs text-gray-400 shrink-0">
+                        {tx.occurredAt?.includes('T')
+                          ? `${tx.occurredAt.split('T')[0].slice(5)} ${tx.occurredAt.split('T')[1].slice(0, 5)}`
+                          : tx.occurredAt}
+                      </span>
+                    </div>
+
+                    {/* 잔액, 금액, 구분 배지 */}
+                    <div className="flex items-center gap-4 shrink-0">
+                      {tx.balanceAfter !== undefined && (
+                        <span className="text-xs text-gray-500 font-medium">
+                          {tx.balanceAfter.toLocaleString()} 미소
+                        </span>
+                      )}
+
+                      <Badge
+                        variant={isPositive ? 'green-pill' : 'danger-pill'}
+                        className="font-bold min-w-[80px] text-center"
+                      >
+                        {isPositive ? `+${Math.abs(tx.amount)}` : tx.amount}{' '}
+                        미소
+                      </Badge>
+
+                      <Badge
+                        variant={isPositive ? 'blue-pill' : 'gray-pill'}
+                        className="font-bold w-12 text-center"
+                      >
+                        {isPositive ? '수입' : '지출'}
+                      </Badge>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* 페이징 네비게이션 */}
+          {transactionsData && transactionsData.totalCount > 20 && (
+            <div className="mt-4 flex items-center justify-center gap-2 pt-3 border-t border-gray-100">
+              <button
+                disabled={txPage <= 1}
+                onClick={() => setTxPage((p) => Math.max(1, p - 1))}
+                className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-bold disabled:opacity-30 cursor-pointer"
+              >
+                이전
+              </button>
+              <span className="text-xs text-gray-500 font-medium">
+                {txPage} / {Math.ceil(transactionsData.totalCount / 20)}
+              </span>
+              <button
+                disabled={txPage >= Math.ceil(transactionsData.totalCount / 20)}
+                onClick={() => setTxPage((p) => p + 1)}
+                className="rounded-lg border border-gray-200 px-3 py-1 text-xs font-bold disabled:opacity-30 cursor-pointer"
+              >
+                다음
+              </button>
+            </div>
+          )}
+        </Card>
+
+        {/* 하단 액션 버튼 2개 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Button
+            variant="primary"
+            fullWidth
+            onClick={() => setTab('saving')}
+            className="py-3.5 text-base"
+          >
+            저축하러 가기
+          </Button>
+
+          <Link href="/credit-report" className="block w-full">
+            <Button variant="primary" fullWidth className="py-3.5 text-base">
+              계좌별 AI 상세 분석 시작하기
+            </Button>
+          </Link>
         </div>
+      </div>
 
       {/* 저축하기 모달 */}
       {isDepositModalOpen && (

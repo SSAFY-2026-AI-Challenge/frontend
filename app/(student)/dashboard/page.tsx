@@ -101,7 +101,7 @@ export default function DashboardPage() {
       />
 
       {/* 2. 신용 등급 배너 */}
-      <div className="relative mb-6 overflow-hidden rounded-3xl bg-gradient-to-r from-[#42D289] via-[#35C884] to-[#6EE7B7] p-7 text-white shadow-sm">
+      <div className="relative mb-6 overflow-hidden rounded-3xl bg-hero-card p-7 text-white shadow-sm">
         <div className="relative z-10 max-w-xl">
           <p className="mb-2 text-sm font-medium text-white/90">나의 신용 등급</p>
           <div className="mb-4 flex flex-wrap items-center text-2xl md:text-3xl font-extrabold tracking-tight">

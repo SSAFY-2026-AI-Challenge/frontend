@@ -17,7 +17,7 @@ export default function Card({
     default:
       'bg-white border border-gray-100/90 shadow-[0_2px_10px_rgba(0,0,0,0.04)]',
     'green-gradient':
-      'bg-gradient-to-r from-[#35C884] via-[#46D392] to-[#6EE7B7] text-white shadow-[0_4px_16px_rgba(53,200,132,0.2)]',
+      'bg-hero-card text-white shadow-[0_4px_16px_rgba(52,195,125,0.2)]',
     'soft-green':
       'bg-[#E8F8F0]/50 border border-[#35C884]/30',
     outline:

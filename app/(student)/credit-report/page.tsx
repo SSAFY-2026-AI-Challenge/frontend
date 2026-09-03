@@ -93,8 +93,8 @@ export default function CreditReportPage() {
 
       {/* 2. 6개 핵심 지표 카드 그리드 (3x2) & 상단에 손을 얹은 꽃 캐릭터 */}
       <div className="relative mb-8">
-        {/* 오른쪽 위: 카드 상단 테두리에 손을 얹고 올라타 있는 꽃 캐릭터 */}
-        <div className="hidden sm:flex absolute right-4 md:right-8 -top-[115px] md:-top-[135px] z-10 pointer-events-none flex-col items-center">
+        {/* 꽃 - 가장 뒤 */}
+        <div className="hidden sm:block absolute right-4 md:right-8 -top-[115px] md:-top-[135px] z-0 pointer-events-none">
           <div className="relative h-32 w-32 md:h-40 md:w-40">
             <Image
               src="/images/characters/flower.svg"
@@ -102,10 +102,16 @@ export default function CreditReportPage() {
               width={160}
               height={160}
               priority
-              className="h-full w-full object-contain"
+              className="h-full w-full object-contain translate-y-[20px] md:translate-y-[25px]"
             />
-            {/* 두 손 (hand.svg) - 카드의 상단 테두리를 쥐고 있는 효과 */}
-            <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-[76px] md:w-[88px] flex justify-between z-20">
+          </div>
+        </div>
+
+        {/* 손 - 가장 앞 */}
+        <div className="hidden sm:block absolute right-4 md:right-8 -top-[115px] md:-top-[135px] z-30 pointer-events-none">
+          <div className="relative h-32 w-32 md:h-40 md:w-40">
+            <div className="absolute bottom-[6px] md:bottom-[8px] left-1/2 -translate-x-1/2 w-[42px] md:w-[60px] flex justify-between">
+              {/* 왼손 */}
               <div className="h-6 w-6 md:h-7 md:w-7 relative -rotate-6">
                 <Image
                   src="/images/characters/hand.svg"
@@ -115,6 +121,8 @@ export default function CreditReportPage() {
                   className="h-full w-full object-contain drop-shadow-xs"
                 />
               </div>
+
+              {/* 오른손 */}
               <div className="h-6 w-6 md:h-7 md:w-7 relative rotate-6">
                 <Image
                   src="/images/characters/hand.svg"

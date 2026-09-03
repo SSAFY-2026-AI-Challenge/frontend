@@ -107,7 +107,7 @@ export default function TeacherDashboardPage() {
       <div
         className={`relative mb-6 overflow-hidden rounded-3xl p-7 text-white shadow-sm transition-all duration-300 ${
           isNormal
-            ? 'bg-gradient-to-r from-[#44D58C] via-[#35C884] to-[#6EE7B7]'
+            ? 'bg-hero-card'
             : 'bg-gradient-to-r from-[#FF7A66] via-[#FF8F77] to-[#FFAA95]'
         }`}
       >

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePayroll } from '@/features/payroll/hooks/usePayroll';
 import { useStudentStore } from '@/stores/useStudentStore';
@@ -11,7 +12,6 @@ import Badge from '@/components/ui/Badge';
 import {
   CoinStackGraphic,
   SproutCloverGraphic,
-  PolaroidCardGraphic,
 } from '@/components/common/FigmaGraphics';
 
 const months = Array.from({ length: 12 }, (_, i) => i + 1);
@@ -84,12 +84,18 @@ export default function PayrollPage() {
 
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link href="/dashboard">
-              <Button variant="outline" className="px-5 py-2.5 text-xs font-bold text-gray-700">
+              <Button
+                variant="outline"
+                className="px-5 py-2.5 text-xs font-bold text-gray-700"
+              >
                 대시보드로 이동
               </Button>
             </Link>
             <Link href="/savings">
-              <Button variant="primary" className="px-5 py-2.5 text-xs font-bold">
+              <Button
+                variant="primary"
+                className="px-5 py-2.5 text-xs font-bold"
+              >
                 저축하러 가기
               </Button>
             </Link>
@@ -116,7 +122,8 @@ export default function PayrollPage() {
                   <span>입니다</span>
                 </div>
                 <p className="text-xs md:text-sm text-gray-500 leading-relaxed">
-                  기본급에서 정해진 소득세와 기금 의무 공제액을 제한 실 수령액입니다.
+                  기본급에서 정해진 소득세와 기금 의무 공제액을 제한 실
+                  수령액입니다.
                 </p>
               </div>
             </div>
@@ -128,16 +135,23 @@ export default function PayrollPage() {
 
           {/* 세부 명세 내역 */}
           <div className="mb-8">
-            <h2 className="mb-4 text-xl font-bold text-gray-900">세부 명세 내역</h2>
+            <h2 className="mb-4 text-xl font-bold text-gray-900">
+              세부 명세 내역
+            </h2>
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {/* 지급 항목 */}
               <Card className="flex flex-col justify-between">
                 <div>
-                  <h3 className="mb-4 text-base font-bold text-gray-900">지급 항목</h3>
+                  <h3 className="mb-4 text-lg font-bold text-gray-900">
+                    지급 항목
+                  </h3>
                   <div className="flex flex-col divide-y divide-gray-50">
                     {payroll.earnings.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between py-2.5 text-sm">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between py-2.5 text-sm"
+                      >
                         <div className="flex items-center gap-2">
                           <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
                           <span className="text-gray-700">{item.name}</span>
@@ -160,10 +174,15 @@ export default function PayrollPage() {
               {/* 공제 항목 */}
               <Card className="flex flex-col justify-between">
                 <div>
-                  <h3 className="mb-4 text-base font-bold text-gray-900">공제 항목</h3>
+                  <h3 className="mb-4 text-lg font-bold text-gray-900">
+                    공제 항목
+                  </h3>
                   <div className="flex flex-col divide-y divide-gray-50">
                     {payroll.deductions.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between py-2.5 text-sm">
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between py-2.5 text-sm"
+                      >
                         <div className="flex items-center gap-2">
                           <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
                           <span className="text-gray-700">{item.name}</span>
@@ -187,7 +206,9 @@ export default function PayrollPage() {
 
           {/* 실수령액 계산 & 포토카드 */}
           <Card className="mb-6">
-            <h3 className="mb-5 text-base font-bold text-gray-900">실수령액 계산</h3>
+            <h3 className="mb-5 text-lg font-bold text-gray-900">
+              실수령액 계산
+            </h3>
 
             <div className="flex flex-col md:flex-row items-center justify-between gap-8">
               {/* 계산 항목 리스트 */}
@@ -195,10 +216,14 @@ export default function PayrollPage() {
                 <div className="flex items-center justify-between py-1.5 text-sm">
                   <div className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
-                    <span className="font-semibold text-gray-800">기본월급 (세전)</span>
+                    <span className="font-semibold text-gray-800">
+                      기본월급 (세전)
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-400">{payroll.jobName || '기본 직업'} 수입</span>
+                    <span className="text-xs text-gray-400">
+                      {payroll.jobName || '기본 직업'} 수입
+                    </span>
                     <Badge variant="green-pill" className="font-bold">
                       {payroll.grossPay.toLocaleString()} 미소
                     </Badge>
@@ -208,10 +233,14 @@ export default function PayrollPage() {
                 <div className="flex items-center justify-between py-1.5 text-sm">
                   <div className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
-                    <span className="font-semibold text-gray-800">공제 합계</span>
+                    <span className="font-semibold text-gray-800">
+                      공제 합계
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-400">세금 및 의무 저축</span>
+                    <span className="text-xs text-gray-400">
+                      세금 및 의무 저축
+                    </span>
                     <Badge variant="danger-pill" className="font-bold">
                       -{payroll.totalDeductions.toLocaleString()} 미소
                     </Badge>
@@ -221,10 +250,14 @@ export default function PayrollPage() {
                 <div className="flex items-center justify-between py-1.5 text-sm">
                   <div className="flex items-center gap-2">
                     <span className="h-1.5 w-1.5 rounded-full bg-gray-400" />
-                    <span className="font-semibold text-gray-800">실 수령액 (세후)</span>
+                    <span className="font-semibold text-gray-800">
+                      실 수령액 (세후)
+                    </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-400">실제 사용 가능 금액</span>
+                    <span className="text-xs text-gray-400">
+                      실제 사용 가능 금액
+                    </span>
                     <Badge variant="success" className="font-bold px-3 py-1">
                       {netPay.toLocaleString()} 미소
                     </Badge>
@@ -238,7 +271,13 @@ export default function PayrollPage() {
 
               {/* 우측 폴라로이드 카드 */}
               <div className="flex justify-center shrink-0 pr-6">
-                <PolaroidCardGraphic className="w-36 h-48" />
+                <Image
+                  src="/objects/flower_card.svg"
+                  alt="SEED 꽃 포토카드"
+                  width={176}
+                  height={224}
+                  className="h-56 w-44 object-contain"
+                />
               </div>
             </div>
           </Card>

@@ -19,10 +19,18 @@ import {
 } from '@/components/common/FigmaGraphics';
 
 export default function DashboardPage() {
-  const { data: dashboard, isLoading, isError, error, refetch } = useStudentDashboard();
+  const {
+    data: dashboard,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useStudentDashboard();
   const { data: creditScoreData } = useCreditScore();
   const student = useStudentStore((state) => state.student);
-  const updateFromDashboard = useStudentStore((state) => state.updateFromDashboard);
+  const updateFromDashboard = useStudentStore(
+    (state) => state.updateFromDashboard,
+  );
   const setSavingsTab = useSavingsStore((state) => state.setTab);
 
   useEffect(() => {
@@ -34,10 +42,14 @@ export default function DashboardPage() {
 
       const rawGrade = creditScoreData?.grade ?? dashboard.credit?.grade;
       const creditGrade =
-        typeof rawGrade === 'number' ? `${rawGrade}등급` : String(rawGrade || '보통');
+        typeof rawGrade === 'number'
+          ? `${rawGrade}등급`
+          : String(rawGrade || '보통');
       const creditScore =
         creditScoreData?.score ||
-        (typeof dashboard.credit?.score === 'number' ? dashboard.credit.score : 688);
+        (typeof dashboard.credit?.score === 'number'
+          ? dashboard.credit.score
+          : 688);
 
       updateFromDashboard({
         currentJob: jobName || undefined,
@@ -62,15 +74,22 @@ export default function DashboardPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center p-8 gap-4">
         <div className="rounded-2xl bg-red-50 border border-red-200 p-6 max-w-md w-full text-center space-y-2">
-          <p className="text-red-600 font-bold text-base">대시보드 데이터를 불러오지 못했습니다</p>
+          <p className="text-red-600 font-bold text-base">
+            대시보드 데이터를 불러오지 못했습니다
+          </p>
           <p className="text-xs text-red-500 font-mono bg-white p-2.5 rounded-lg border border-red-100 text-left break-all">
             {errorMsg}
           </p>
           <p className="text-xs text-gray-500 pt-2">
-            💡 .env.local 수정 후에는 개발 서버(npm run dev)를 재시작해야 환경변수가 적용됩니다.
+            💡 .env.local 수정 후에는 개발 서버(npm run dev)를 재시작해야
+            환경변수가 적용됩니다.
           </p>
         </div>
-        <Button variant="outline" onClick={() => refetch()} className="px-6 py-2 text-xs font-bold">
+        <Button
+          variant="outline"
+          onClick={() => refetch()}
+          className="px-6 py-2 text-xs font-bold"
+        >
           다시 시도
         </Button>
       </div>
@@ -79,7 +98,9 @@ export default function DashboardPage() {
 
   const rawGrade = creditScoreData?.grade ?? dashboard.credit?.grade;
   const currentGrade =
-    typeof rawGrade === 'number' ? `${rawGrade}등급` : String(rawGrade || '2등급');
+    typeof rawGrade === 'number'
+      ? `${rawGrade}등급`
+      : String(rawGrade || '2등급');
 
   const jobName =
     typeof dashboard.job === 'object' && dashboard.job !== null
@@ -103,7 +124,9 @@ export default function DashboardPage() {
       {/* 2. 신용 등급 배너 */}
       <div className="relative mb-6 overflow-hidden rounded-3xl bg-hero-card p-7 text-white shadow-sm">
         <div className="relative z-10 max-w-xl">
-          <p className="mb-2 text-sm font-medium text-white/90">나의 신용 등급</p>
+          <p className="mb-2 text-sm font-medium text-white/90">
+            나의 신용 등급
+          </p>
           <div className="mb-4 flex flex-wrap items-center text-2xl md:text-3xl font-extrabold tracking-tight">
             <span>{student.name.split(' ')[0]}의 신용등급은</span>
             <span className="mx-2.5 inline-flex items-center rounded-xl bg-white px-3.5 py-0.5 text-xl md:text-2xl font-black text-[#0B654B] shadow-sm">
@@ -136,7 +159,9 @@ export default function DashboardPage() {
         {/* 나의 현재 직업 */}
         <Card className="flex flex-col justify-between">
           <div>
-            <h2 className="mb-3 text-lg font-bold text-gray-900">나의 현재 직업은</h2>
+            <h2 className="mb-3 text-xl font-bold text-gray-900">
+              나의 현재 직업은
+            </h2>
             <span className="inline-flex rounded-full border border-[#35C884] bg-[#E8F8F0] px-4 py-1 text-sm font-bold text-[#0B654B]">
               {jobName}
             </span>
@@ -156,7 +181,9 @@ export default function DashboardPage() {
         {/* 8월 경제 활동 보기 */}
         <Card className="flex flex-col justify-between">
           <div>
-            <h2 className="mb-1 text-lg font-bold text-gray-900">8월 경제 활동 보기</h2>
+            <h2 className="mb-1 text-xl font-bold text-gray-900">
+              8월 경제 활동 보기
+            </h2>
             <p className="text-sm text-gray-500">
               새로운 급여 수령과 직업 활동 기록이 업데이트 되었어요
             </p>
@@ -168,7 +195,11 @@ export default function DashboardPage() {
 
           <div className="flex flex-col gap-3">
             <Link href="/credit-report" className="w-full">
-              <Button variant="outline" fullWidth className="py-3 text-gray-700">
+              <Button
+                variant="outline"
+                fullWidth
+                className="py-3 text-gray-700"
+              >
                 AI 신용평가 확인하기
               </Button>
             </Link>
@@ -186,7 +217,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* 왼쪽: 이번 달 한눈에 보기 */}
         <div>
-          <h2 className="mb-3 text-lg font-bold text-gray-900">이번 달 한눈에 보기</h2>
+          <h2 className="mb-3 text-xl font-bold text-gray-900">
+            이번 달 한눈에 보기
+          </h2>
           <div className="flex flex-col gap-3.5">
             {/* 번 금액 */}
             <Card className="flex items-center justify-between p-5 hover:border-emerald-200 transition-colors">
@@ -194,7 +227,10 @@ export default function DashboardPage() {
                 <span className="text-base font-bold text-gray-800">
                   이번 달 번 금액
                 </span>
-                <Badge variant="green-pill" className="w-fit text-sm px-3.5 py-1 font-bold">
+                <Badge
+                  variant="green-pill"
+                  className="w-fit text-sm px-3.5 py-1 font-bold"
+                >
                   {dashboard.incomeThisMonth.toLocaleString()} 미소
                 </Badge>
               </div>
@@ -204,8 +240,13 @@ export default function DashboardPage() {
             {/* 총 자산 */}
             <Card className="flex items-center justify-between p-5 hover:border-emerald-200 transition-colors">
               <div className="flex flex-col gap-2">
-                <span className="text-base font-bold text-gray-800">총 자산</span>
-                <Badge variant="green-pill" className="w-fit text-sm px-3.5 py-1 font-bold">
+                <span className="text-base font-bold text-gray-800">
+                  총 자산
+                </span>
+                <Badge
+                  variant="green-pill"
+                  className="w-fit text-sm px-3.5 py-1 font-bold"
+                >
                   {dashboard.totalAssets.toLocaleString()} 미소
                 </Badge>
               </div>
@@ -218,7 +259,10 @@ export default function DashboardPage() {
                 <span className="text-base font-bold text-gray-800">
                   저축한 금액 ({savingsRateDisplay})
                 </span>
-                <Badge variant="green-pill" className="w-fit text-sm px-3.5 py-1 font-bold">
+                <Badge
+                  variant="green-pill"
+                  className="w-fit text-sm px-3.5 py-1 font-bold"
+                >
                   {dashboard.savingsBalance.toLocaleString()} 미소
                 </Badge>
               </div>
@@ -230,7 +274,7 @@ export default function DashboardPage() {
         {/* 오른쪽: 최근 거래 내역 */}
         <div>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-bold text-gray-900">최근 거래 내역</h2>
+            <h2 className="text-xl font-bold text-gray-900">최근 거래 내역</h2>
           </div>
 
           <Card className="flex flex-col justify-between p-6">

@@ -67,24 +67,9 @@ export default function CreditReportPage() {
 
   return (
     <div className="mx-auto max-w-6xl p-6 md:p-8">
-      {/* 1. 상단 헤더 & 탭 & 헤드라인 */}
+      {/* 1. 상단 헤더 & 헤드라인 */}
       <div className="relative mb-8">
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-4 relative z-30">
-          <PageHeader badgeText={student.classRoom} title="우리반 경제생활" />
-
-          {/* 탭 토글: 핵심 지표 요약 / AI 신용평가 (z-30으로 상단 우선 표시) */}
-          <div className="flex items-center gap-1 rounded-xl bg-gray-100 p-1 border border-gray-200 relative z-30">
-            <span className="rounded-lg bg-[#35C884] px-4 py-1.5 text-xs font-bold text-white shadow-xs">
-              핵심 지표 요약
-            </span>
-            <Link
-              href="/credit-report/evaluation"
-              className="rounded-lg px-4 py-1.5 text-xs font-bold text-gray-500 hover:text-gray-800 transition-all"
-            >
-              AI 신용평가
-            </Link>
-          </div>
-        </div>
+        <PageHeader badgeText={student.classRoom} title="우리반 경제생활" />
 
         <h1 className="text-xl md:text-2xl font-extrabold text-gray-900 leading-snug tracking-tight whitespace-pre-line mt-2 max-w-xl">
           이번 달 활동에 따른&#10;핵심 지표를 한눈에 확인하세요!
@@ -139,7 +124,7 @@ export default function CreditReportPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 relative z-0">
           {metrics.map((item, idx) => (
             <Card key={idx} className="flex flex-col justify-between p-6">
-              <h3 className="text-base font-bold text-gray-900 mb-3">
+              <h3 className="mb-3 text-xl font-bold text-gray-900">
                 {item.title}
               </h3>
               <div>
@@ -161,7 +146,7 @@ export default function CreditReportPage() {
       {/* 3. 월별 경제활동 결과 요약 카드 */}
       <Card className="mb-8 p-6">
         <div className="flex items-center justify-between mb-5">
-          <h3 className="text-lg font-bold text-gray-900">
+          <h3 className="text-xl font-bold text-gray-900">
             월별 경제활동 결과 요약
           </h3>
           <span className="text-xs text-gray-400">최근 5건 기준</span>

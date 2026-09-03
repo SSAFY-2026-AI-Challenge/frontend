@@ -1,6 +1,7 @@
 import { apiFetch } from '@/lib/api/fetcher';
 
 import type {
+  SavingsGoal,
   SavingsRecommendationResponse,
   SavingsSummaryResponse,
   SavingsTransferRequest,
@@ -8,32 +9,41 @@ import type {
   SavingsTrendsResponse,
 } from './types';
 
-export function getSavingsSummary() {
-  return apiFetch<SavingsSummaryResponse>(
-    '/api/v1/savings/summary',
-  );
+export function getSavingsSummary(): Promise<SavingsSummaryResponse> {
+  return apiFetch<SavingsSummaryResponse>('/api/v1/savings/summary');
 }
 
-export function getSavingsTrends() {
-  return apiFetch<SavingsTrendsResponse>(
-    '/api/v1/savings/trends',
-  );
+export function getSavingsGoal(): Promise<SavingsGoal> {
+  return apiFetch<SavingsGoal>('/api/v1/savings/goal');
+}
+
+export async function getSavingsTrends(): Promise<SavingsTrendsResponse> {
+  const res = await apiFetch<unknown>('/api/v1/savings/trends');
+  if (Array.isArray(res)) {
+    return { trends: res };
+  }
+  if (res && typeof res === 'object' && Array.isArray((res as Record<string, unknown>).trends)) {
+    return res as SavingsTrendsResponse;
+  }
+  return { trends: [] };
 }
 
 export function transferSavings(
   request: SavingsTransferRequest,
-) {
-  return apiFetch<SavingsTransferResponse>(
-    '/api/v1/savings/transfers',
-    {
-      method: 'POST',
-      body: JSON.stringify(request),
-    },
-  );
+): Promise<SavingsTransferResponse> {
+  return apiFetch<SavingsTransferResponse>('/api/v1/savings/transfers', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  });
 }
 
-export function getSavingsRecommendations() {
-  return apiFetch<SavingsRecommendationResponse>(
-    '/api/v1/savings/recommendations',
-  );
+export async function getSavingsRecommendations(): Promise<SavingsRecommendationResponse> {
+  const res = await apiFetch<unknown>('/api/v1/savings/recommendations');
+  if (Array.isArray(res)) {
+    return { recommendations: res };
+  }
+  if (res && typeof res === 'object' && Array.isArray((res as Record<string, unknown>).recommendations)) {
+    return res as SavingsRecommendationResponse;
+  }
+  return { recommendations: [] };
 }

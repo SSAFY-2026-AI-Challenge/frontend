@@ -1,5 +1,17 @@
 @import 'tailwindcss';
 
+:root {
+  --color-primary: #35c884;
+  --color-primary-dark: #0b654b;
+  --color-primary-light: #ddf8e9;
+
+  --color-danger: #ff5d5d;
+  --color-danger-light: #ffe5e5;
+
+  --color-background: #f9faf7;
+  --color-border: #e5e7eb;
+}
+
 html,
 body {
   min-height: 100%;

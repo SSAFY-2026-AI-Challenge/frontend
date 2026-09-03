@@ -17,7 +17,12 @@ export default function CreditEvaluationPage() {
   const student = useStudentStore((state) => state.student);
   const { getYearMonthString } = useMonthStore();
   const yearMonth = getYearMonthString();
-  const { data: report, isLoading, isError, error } = useCreditReport(yearMonth);
+  const {
+    data: report,
+    isLoading,
+    isError,
+    error,
+  } = useCreditReport(yearMonth);
   const { data: creditScoreData } = useCreditScore();
 
   // 1. 점수 및 등급 추출 (백엔드 실제 필드: creditScore, summary 파싱 등)
@@ -42,7 +47,9 @@ export default function CreditEvaluationPage() {
     '보통';
 
   const currentGrade =
-    typeof rawGrade === 'number' ? `${rawGrade}등급` : String(rawGrade || '보통');
+    typeof rawGrade === 'number'
+      ? `${rawGrade}등급`
+      : String(rawGrade || '보통');
 
   // 2. content 3줄 분리 (행동 조언)
   const contentLines = (report?.content || '')
@@ -66,8 +73,7 @@ export default function CreditEvaluationPage() {
         contentLines[0] ||
         '사고 싶은 것과 꼭 필요한 것을 나눠 생각해 보세요. 일주일 용돈을 먼저 계획하면 지출이 차분해집니다.',
       effect:
-        effectLines[0] ||
-        '과소비를 줄이면 신용점수가 오릅니다. (예상 +116점)',
+        effectLines[0] || '과소비를 줄이면 신용점수가 오릅니다. (예상 +116점)',
     },
     {
       title: '숙제 및 과제 성실도',
@@ -119,25 +125,9 @@ export default function CreditEvaluationPage() {
 
   return (
     <div className="relative mx-auto max-w-6xl p-6 md:p-8 pb-32">
-      {/* 1. 상단 헤더 및 탭 전환 */}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <PageHeader
-          badgeText={student.classRoom}
-          title="우리반 경제생활"
-        />
-
-        {/* 탭 토글: 핵심 지표 요약 / AI 신용평가 */}
-        <div className="flex items-center gap-1 rounded-xl bg-gray-100 p-1 border border-gray-200">
-          <Link
-            href="/credit-report"
-            className="rounded-lg px-4 py-1.5 text-xs font-bold text-gray-500 hover:text-gray-800 transition-all"
-          >
-            핵심 지표 요약
-          </Link>
-          <span className="rounded-lg bg-[#35C884] px-4 py-1.5 text-xs font-bold text-white shadow-xs">
-            AI 신용평가
-          </span>
-        </div>
+      {/* 1. 상단 헤더 */}
+      <div className="mb-6">
+        <PageHeader badgeText={student.classRoom} title="우리반 경제생활" />
       </div>
 
       {/* 2. 로딩 중 상태 */}
@@ -160,22 +150,31 @@ export default function CreditEvaluationPage() {
             AI 신용평가 안내
           </h3>
           <p className="text-sm md:text-base font-semibold text-gray-700 mb-2">
-            {error instanceof Error ? error.message : '해당 월의 신용 평가 결과를 찾을 수 없습니다.'}
+            {error instanceof Error
+              ? error.message
+              : '해당 월의 신용 평가 결과를 찾을 수 없습니다.'}
           </p>
           <p className="text-xs md:text-sm text-gray-400 max-w-md mb-8 leading-relaxed">
-            아직 월말 결산이 완료되지 않았거나 신용평가 결과가 생성되지 않았습니다.
+            아직 월말 결산이 완료되지 않았거나 신용평가 결과가 생성되지
+            않았습니다.
             <br />
             핵심 지표 요약 화면 또는 대시보드에서 최신 정보를 확인해 보세요.
           </p>
 
           <div className="flex items-center justify-center gap-3">
             <Link href="/credit-report">
-              <Button variant="outline" className="px-5 py-2.5 text-xs font-bold text-gray-700">
+              <Button
+                variant="outline"
+                className="px-5 py-2.5 text-xs font-bold text-gray-700"
+              >
                 핵심 지표 요약 확인
               </Button>
             </Link>
             <Link href="/dashboard">
-              <Button variant="primary" className="px-5 py-2.5 text-xs font-bold">
+              <Button
+                variant="primary"
+                className="px-5 py-2.5 text-xs font-bold"
+              >
                 대시보드로 이동
               </Button>
             </Link>
@@ -189,7 +188,9 @@ export default function CreditEvaluationPage() {
           {/* 나의 신용 점수 배너 카드 */}
           <Card className="mb-6 flex flex-col md:flex-row items-center justify-between gap-6 p-7">
             <div className="flex-1">
-              <p className="text-sm font-semibold text-gray-500 mb-1">나의 신용 점수</p>
+              <p className="text-sm font-semibold text-gray-500 mb-1">
+                나의 신용 점수
+              </p>
               <div className="mb-3 flex flex-wrap items-center text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
                 <span>나의 현재 신용 점수는</span>
                 <span className="mx-2.5 inline-flex items-center rounded-xl bg-[#35C884] px-3.5 py-0.5 text-xl md:text-2xl font-black text-white shadow-sm">
@@ -216,7 +217,7 @@ export default function CreditEvaluationPage() {
 
           {/* 3대 신용 평가 요인 분석 및 행동 제안 카드 */}
           <Card className="mb-6 p-7">
-            <h3 className="mb-4 text-base font-extrabold text-gray-900">
+            <h3 className="mb-4 text-xl font-extrabold text-gray-900">
               3대 신용 평가 요인 분석 및 행동 제안
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -265,7 +266,7 @@ export default function CreditEvaluationPage() {
 
           {/* 6대 행동 데이터 (features 반영) */}
           <Card className="mb-6 p-7">
-            <h3 className="mb-4 text-base font-extrabold text-gray-900">
+            <h3 className="mb-4 text-xl font-extrabold text-gray-900">
               신용 평가 반영 행동 데이터
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">

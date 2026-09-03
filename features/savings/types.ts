@@ -5,6 +5,16 @@ export type SavingsSummaryResponse = {
   savingsRate: number;
 };
 
+export type SavingsGoal = {
+  id?: string;
+  goalId?: string;
+  title?: string;
+  targetAmount?: number;
+  currentAmount?: number;
+  progressPercent?: number;
+  period?: string;
+};
+
 export type MonthlySaving = {
   yearMonth: string;
   amount: number;

@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query';
-
 import { getCreditReport } from '../api';
 
 export function useCreditReport(yearMonth: string) {
@@ -7,5 +6,6 @@ export function useCreditReport(yearMonth: string) {
     queryKey: ['credit-report', yearMonth],
     queryFn: () => getCreditReport(yearMonth),
     enabled: Boolean(yearMonth),
+    retry: false,
   });
 }

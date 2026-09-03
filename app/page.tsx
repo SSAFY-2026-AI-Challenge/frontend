@@ -2,24 +2,19 @@ import LoginForm from '@/features/auth/components/LoginForm';
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen items-center justify-center px-4">
-      <section className="w-full max-w-sm">
-        <header className="mb-8 text-center">
-          <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-md border font-bold">
-            ₩
-          </div>
-
-          <h1 className="text-2xl font-bold">금배금배</h1>
-
-          <p className="mt-2 text-sm text-gray-500">
-            학급 단위 가상 화폐를 통해 배우는 초등 경제 교육 플랫폼
-          </p>
-        </header>
-
+    <main
+      className="relative flex min-h-screen flex-col items-center justify-center bg-[#34C37D] px-4 py-8 bg-cover bg-center"
+      style={{
+        backgroundImage: "url('/backgrounds/green-pattern.svg')",
+      }}
+    >
+      {/* 중앙 로그인 폼 카드 */}
+      <section className="relative z-10 flex flex-col items-center justify-center w-full max-w-[440px]">
         <LoginForm />
 
-        <footer className="mt-8 text-center text-xs text-gray-400">
-          © 2026 우리반 경제생활 MVP.
+        {/* 하단 카피라이트 */}
+        <footer className="mt-6 text-center text-xs text-white/80 tracking-tight">
+          © 2026 우리반 경제생활 MVP. All Rights Reserved.
         </footer>
       </section>
     </main>

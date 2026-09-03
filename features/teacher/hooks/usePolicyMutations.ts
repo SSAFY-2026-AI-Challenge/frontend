@@ -1,24 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { applyPolicy, simulatePolicy } from '../api';
-import type { ApplyPolicyRequest, PolicySimulationRequest } from '../types';
+import { useMutation } from '@tanstack/react-query';
+import { DEFAULT_CLASSROOM_ID, simulatePolicy } from '../api';
+import type { PolicySimulationRequest } from '../types';
 
-export function usePolicySimulation(classroomId: string = 'cls_001') {
+export function usePolicySimulation(classroomId = DEFAULT_CLASSROOM_ID) {
   return useMutation({
     mutationFn: (request: PolicySimulationRequest) =>
       simulatePolicy(classroomId, request),
-  });
-}
-
-export function useApplyPolicy(classroomId: string = 'cls_001') {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (request: ApplyPolicyRequest) =>
-      applyPolicy(classroomId, request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['classroom-dashboard', classroomId],
-      });
-    },
   });
 }

@@ -1,90 +1,89 @@
+export type EconomicStatus =
+  'CONTRACTION' | 'EXPANSION' | 'STABLE' | 'INFLATION' | 'DEFLATION' | string;
+
 export type ClassroomKpis = {
   moneySupply: number;
   averageBalance: number;
   totalConsumption: number;
   totalSavings: number;
-  inflationRate: number;
-  consumptionGrowthRate: number;
+  transactionVolume: number;
 };
 
+export type ClassroomEconomyDashboardResponse = { kpis: ClassroomKpis };
+
 export type ClassroomStudentEconomy = {
-  studentId: string;
+  studentId: number;
   name: string;
   jobName: string;
   balance: number;
-  creditGrade: string | number;
+  creditGrade: string;
 };
 
-export type ClassroomEconomyDashboardResponse = {
-  economicStatus: 'STABLE' | 'INFLATION' | 'DEFLATION' | string;
-  severity: 'NORMAL' | 'WARNING' | 'CRITICAL' | string;
-  kpis: ClassroomKpis;
-  trends?: {
-    moneySupply?: unknown[];
-    transactionVolume?: unknown[];
-  };
-  students: ClassroomStudentEconomy[];
+export type EconomicMetricLatest = {
+  totalMoney: number;
+  averageAsset: number;
+  weeklyTransactionVolume: number;
+  averageConsumption: number;
+  consumptionChangeRate: number;
+  transactionChangeRate: number;
+  savingRate: number;
+  wealthGap: number;
+  measuredAt: string;
 };
 
+export type EconomicMetricTrend = Pick<
+  EconomicMetricLatest,
+  | 'totalMoney'
+  | 'weeklyTransactionVolume'
+  | 'averageConsumption'
+  | 'savingRate'
+  | 'measuredAt'
+>;
 export type ClassroomIndicatorsResponse = {
-  moneySupply: number;
-  averageBalance: number;
-  totalConsumption: number;
-  totalSavings: number;
-  inflationRate: number;
-  consumptionGrowthRate: number;
-  trends?: {
-    moneySupply?: { period: string; amount: number }[];
-    transactionVolume?: { period: string; count: number }[];
-  };
+  latest: EconomicMetricLatest;
+  trends: EconomicMetricTrend[];
+};
+
+export type EconomicEvent = {
+  id: number;
+  name: string;
+  level: string;
+  description: string | null;
+  trigger: string;
+  target: string;
+  effect: string;
+  value: number;
 };
 
 export type EconomicAnalysisResponse = {
-  analysisId?: string;
-  status: 'STABLE' | 'INFLATION' | 'DEFLATION' | string;
-  severity: 'NORMAL' | 'WARNING' | 'CRITICAL' | string;
+  classroomId: number;
+  economicStatus: EconomicStatus;
   summary: string;
-  causes: string[];
-  recommendations: string[];
-  analyzedAt: string;
+  mainFactors: string[];
+  generatedAt: string;
 };
 
 export type PolicyProposal = {
   proposalId: string;
+  policyType: string;
   title: string;
   description: string;
-  category: 'TAX' | 'CURRENCY' | 'CONSUMPTION' | string;
-  defaultParameters?: Record<string, unknown>;
-  expectedEffect?: string;
+  purpose: string;
 };
 
 export type PolicySimulationRequest = {
   proposalId: string;
-  parameters?: Record<string, unknown>;
+  parameters: { incomeTaxRate: number };
 };
-
 export type PolicyStateSnapshot = {
   moneySupply: number;
   totalConsumption: number;
   inflationRate: number;
   consumptionGrowthRate: number;
-  economicStatus: string;
+  economicStatus: EconomicStatus;
 };
-
 export type PolicySimulationResponse = {
   before: PolicyStateSnapshot;
   after: PolicyStateSnapshot;
   changes: string[];
-};
-
-export type ApplyPolicyRequest = {
-  proposalId: string;
-  parameters?: Record<string, unknown>;
-};
-
-export type ApplyPolicyResponse = {
-  policyId: string;
-  appliedAt: string;
-  status: string;
-  result?: PolicySimulationResponse;
 };

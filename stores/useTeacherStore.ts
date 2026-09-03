@@ -1,40 +1,22 @@
 import { create } from 'zustand';
+import type {
+  PolicyProposal,
+  PolicySimulationResponse,
+} from '@/features/teacher/types';
 
-export type ClassroomMacroStatus = 'NORMAL' | 'INFLATION';
-export type TeacherPolicyType =
-  | 'CURRENCY_DECREASE'
-  | 'TAX_INCREASE'
-  | 'CONSUMPTION_LIMIT';
-
-interface TeacherState {
-  status: ClassroomMacroStatus;
-  selectedPolicy: TeacherPolicyType;
-  isPolicyApplied: boolean;
-  setStatus: (status: ClassroomMacroStatus) => void;
-  toggleStatus: () => void;
-  setSelectedPolicy: (policy: TeacherPolicyType) => void;
-  applyPolicy: () => void;
+type TeacherState = {
+  selectedProposal: PolicyProposal | null;
+  simulation: PolicySimulationResponse | null;
+  setSelectedProposal: (proposal: PolicyProposal) => void;
+  setSimulation: (result: PolicySimulationResponse) => void;
   resetPolicy: () => void;
-}
+};
 
 export const useTeacherStore = create<TeacherState>((set) => ({
-  status: 'NORMAL',
-  selectedPolicy: 'TAX_INCREASE',
-  isPolicyApplied: false,
-  setStatus: (status) => set({ status }),
-  toggleStatus: () =>
-    set((state) => ({
-      status: state.status === 'NORMAL' ? 'INFLATION' : 'NORMAL',
-    })),
-  setSelectedPolicy: (policy) => set({ selectedPolicy: policy }),
-  applyPolicy: () =>
-    set({
-      isPolicyApplied: true,
-      status: 'NORMAL',
-    }),
-  resetPolicy: () =>
-    set({
-      isPolicyApplied: false,
-      status: 'INFLATION',
-    }),
+  selectedProposal: null,
+  simulation: null,
+  setSelectedProposal: (selectedProposal) =>
+    set({ selectedProposal, simulation: null }),
+  setSimulation: (simulation) => set({ simulation }),
+  resetPolicy: () => set({ selectedProposal: null, simulation: null }),
 }));

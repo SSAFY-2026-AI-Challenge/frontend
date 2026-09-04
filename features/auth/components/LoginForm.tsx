@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -9,12 +9,25 @@ import { loginApi } from '../api';
 
 export default function LoginForm() {
   const router = useRouter();
-  const login = useAuthStore((state) => state.login);
+  const { isAuthenticated, user, isHydrated } = useAuthStore();
 
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // 이미 로그인된 사용자는 해당 대시보드로 자동 이동
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    if (isAuthenticated && user) {
+      if (user.role?.toUpperCase() === 'TEACHER') {
+        router.replace('/teacher/dashboard');
+      } else {
+        router.replace('/dashboard');
+      }
+    }
+  }, [isAuthenticated, user, isHydrated, router]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,35 +49,28 @@ export default function LoginForm() {
     setIsLoading(true);
 
     try {
-      // 1. 실제 백엔드 /api/v1/auth/login 호출 시도
+      // 1. 백엔드 로그인 API 호출
       const res = await loginApi({
         loginId: trimmedId,
         password: trimmedPw,
       });
 
-      if (res && res.user) {
-        login(res.user, res.accessToken || res.token);
-        if (res.user.role === 'TEACHER') {
+      if (res && res.accessToken && res.user) {
+        if (res.user.role?.toUpperCase() === 'TEACHER') {
           router.push('/teacher/dashboard');
         } else {
-          router.push('/onboarding');
+          router.push('/dashboard');
         }
         return;
       }
-    } catch {
-      // 2. 백엔드 로그인 엔드포인트 미구현(단일 테스트 유저 모드) 시 클라이언트 세션 활성화 및 역할 분기
+    } catch (err: unknown) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : '로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.';
+      setErrorMessage(message);
     } finally {
       setIsLoading(false);
-    }
-
-    // Fallback: 교사/학생 ID 키워드 감지 또는 기본 학생 세션 진입
-    const isTeacher = trimmedId.toLowerCase().includes('teacher');
-    login(trimmedId);
-
-    if (isTeacher) {
-      router.push('/teacher/dashboard');
-    } else {
-      router.push('/onboarding');
     }
   };
 

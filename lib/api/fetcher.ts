@@ -63,6 +63,24 @@ export async function apiFetch<T>(
   });
 
   if (!response.ok) {
+    if (response.status === 401 && isBrowser) {
+      const isAuthEndpoint =
+        cleanPath.includes('login') || cleanPath.includes('logout');
+      if (!isAuthEndpoint) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('accessToken');
+        if (typeof document !== 'undefined') {
+          document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+          document.cookie = 'seed_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+        }
+        if (window.location.pathname !== '/') {
+          // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+          window.location.href = '/';
+        }
+      }
+    }
+
     let errorMessage = `요청 실패 (상태 코드: ${response.status})`;
     let errorCode: string | undefined = undefined;
     let errorData: unknown = null;

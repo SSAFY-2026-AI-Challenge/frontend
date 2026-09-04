@@ -1,83 +1,100 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type AuthUser = {
-  id: string;
+export type UserRole = 'STUDENT' | 'TEACHER';
+
+export interface AuthUser {
+  id: number;
   name: string;
-  role: 'STUDENT' | 'TEACHER';
-  job?: string;
-  avatar_url?: string;
-  class?: string;
-};
+  role: UserRole | string;
+  job: string;
+  avatar_url?: string | null;
+  class?: string | null;
+  classroomId?: number | null;
+}
 
 interface AuthState {
   isAuthenticated: boolean;
-  userId: string | null;
   user: AuthUser | null;
   token: string | null;
-  login: (userOrId: string | AuthUser, token?: string) => void;
+  isHydrated: boolean;
+  login: (token: string, user: AuthUser) => void;
   setUser: (user: AuthUser) => void;
   logout: () => void;
+  setHydrated: (hydrated: boolean) => void;
 }
+
+const setAuthCookies = (token: string, role: string) => {
+  if (typeof document === 'undefined') return;
+  const expires = new Date(Date.now() + 7 * 864e5).toUTCString();
+  document.cookie = `accessToken=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax`;
+  document.cookie = `seed_role=${encodeURIComponent(role)}; expires=${expires}; path=/; SameSite=Lax`;
+};
+
+const clearAuthCookies = () => {
+  if (typeof document === 'undefined') return;
+  document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+  document.cookie = 'seed_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+};
 
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       isAuthenticated: false,
-      userId: null,
       user: null,
       token: null,
+      isHydrated: false,
 
-      login: (userOrId: string | AuthUser, token?: string) => {
-        let authUser: AuthUser;
-
-        if (typeof userOrId === 'string') {
-          const isTeacher = userOrId.toLowerCase().includes('teacher');
-          authUser = {
-            id: userOrId,
-            name: isTeacher ? '김선생님' : '황건우',
-            role: isTeacher ? 'TEACHER' : 'STUDENT',
-            job: isTeacher ? '담임교사' : '정리 반장',
-            class: '6학년 4반',
-          };
-        } else {
-          authUser = userOrId;
-        }
-
-        if (typeof window !== 'undefined' && token) {
+      login: (token: string, user: AuthUser) => {
+        if (typeof window !== 'undefined') {
           localStorage.setItem('accessToken', token);
+          setAuthCookies(token, user.role);
         }
 
         set({
           isAuthenticated: true,
-          userId: authUser.id,
-          user: authUser,
-          token: token || null,
+          user,
+          token,
         });
       },
 
       setUser: (user: AuthUser) =>
-        set({
-          user,
-          userId: user.id,
-          isAuthenticated: true,
+        set((state) => {
+          if (state.token) {
+            setAuthCookies(state.token, user.role);
+          }
+          return {
+            user,
+            isAuthenticated: true,
+          };
         }),
 
       logout: () => {
         if (typeof window !== 'undefined') {
           localStorage.removeItem('accessToken');
           localStorage.removeItem('token');
+          sessionStorage.removeItem('accessToken');
+          clearAuthCookies();
         }
         set({
           isAuthenticated: false,
-          userId: null,
           user: null,
           token: null,
         });
       },
+
+      setHydrated: (hydrated: boolean) => set({ isHydrated: hydrated }),
     }),
     {
       name: 'seed-auth-storage',
+      partialize: (state) => ({
+        isAuthenticated: state.isAuthenticated,
+        user: state.user,
+        token: state.token,
+      }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(true);
+      },
     }
   )
 );

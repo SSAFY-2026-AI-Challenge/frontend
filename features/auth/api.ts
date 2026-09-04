@@ -1,34 +1,51 @@
-import { apiFetch } from '@/lib/api/fetcher';
-import type { AuthUser } from '@/stores/useAuthStore';
+import { apiFetch, ApiError } from '@/lib/api/fetcher';
+import { useAuthStore, type AuthUser } from '@/stores/useAuthStore';
 
-export type LoginRequest = {
+export interface LoginRequest {
   loginId: string;
-  password?: string;
-};
+  password: string;
+}
 
-export type LoginResponse = {
-  user?: AuthUser;
-  accessToken?: string;
-  token?: string;
-  message?: string;
-};
+export interface LoginResponse {
+  accessToken: string;
+  user: AuthUser;
+}
+
+export interface LogoutResponse {
+  message: string;
+}
 
 export async function loginApi(request: LoginRequest): Promise<LoginResponse> {
-  const payload = {
-    loginId: request.loginId,
+  const payload: LoginRequest = {
+    loginId: request.loginId.trim(),
     password: request.password,
   };
 
-  const response = await apiFetch<LoginResponse>('/api/v1/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
+  let response: LoginResponse;
 
-  if (typeof window !== 'undefined' && response) {
-    const token = response.accessToken || response.token;
-    if (token) {
-      localStorage.setItem('accessToken', token);
+  try {
+    response = await apiFetch<LoginResponse>('/api/v1/auth/login', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  } catch (err: unknown) {
+    if (err instanceof ApiError && err.status === 404) {
+      // 404 폴백: /api/v1/login 시도
+      try {
+        response = await apiFetch<LoginResponse>('/api/v1/login', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+      } catch {
+        throw err;
+      }
+    } else {
+      throw err;
     }
+  }
+
+  if (response?.accessToken && response?.user) {
+    useAuthStore.getState().login(response.accessToken, response.user);
   }
 
   return response;
@@ -36,14 +53,24 @@ export async function loginApi(request: LoginRequest): Promise<LoginResponse> {
 
 export async function logoutApi(): Promise<void> {
   try {
-    await apiFetch<void>('/api/v1/auth/logout', {
-      method: 'POST',
-    });
-  } finally {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('token');
+    try {
+      await apiFetch<LogoutResponse>('/api/v1/auth/logout', {
+        method: 'POST',
+      });
+    } catch (err: unknown) {
+      if (err instanceof ApiError && err.status === 404) {
+        await apiFetch<LogoutResponse>('/api/v1/logout', {
+          method: 'POST',
+        });
+      } else {
+        throw err;
+      }
     }
+  } catch (err: unknown) {
+    // 401(이미 만료됨) 또는 기타 에러여도 클라이언트 토큰 삭제는 진행
+    console.warn('[logoutApi] Server logout warning:', err);
+  } finally {
+    useAuthStore.getState().logout();
   }
 }
 
@@ -54,3 +81,4 @@ export async function getMe(): Promise<AuthUser> {
   }
   return res as AuthUser;
 }
+

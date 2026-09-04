@@ -8,26 +8,20 @@ import UserProfileMenu from './UserProfileMenu';
 
 const teacherMenuItems = [
   {
-    label: '홈',
+    label: '학급 대시보드',
     href: '/teacher/dashboard',
     icon: '/buttons/home.svg',
     selectedIcon: '/buttons/home_select.svg',
   },
   {
-    label: '급여/세금',
-    href: '/payroll',
-    icon: '/buttons/money.svg',
-    selectedIcon: '/buttons/money_select.svg',
-  },
-  {
-    label: '소비/저축',
+    label: '정책 시뮬레이션',
     href: '/teacher/policy',
     icon: '/buttons/consumtion.svg',
     selectedIcon: '/buttons/consumtion_select.svg',
   },
   {
-    label: '리포트',
-    href: '/credit-report',
+    label: '시뮬레이션 결과',
+    href: '/teacher/policy/result',
     icon: '/buttons/report.svg',
     selectedIcon: '/buttons/report_select.svg',
   },
@@ -45,7 +39,7 @@ export default function TeacherSidebar() {
     >
       {/* 1. 상단 SEED 로고 및 접기/펼치기 */}
       <div
-        className={`mb-8 flex items-center ${
+        className={`mb-5 flex items-center ${
           isOpen ? 'justify-between' : 'justify-center'
         }`}
       >
@@ -84,12 +78,15 @@ export default function TeacherSidebar() {
         </button>
       </div>
 
-      {/* 2. 네비게이션 메뉴 */}
+      {/* 2. 상단 교사 프로필 메뉴 (로고 바로 밑) */}
+      <div className="mb-6 pb-5 border-b border-white/10">
+        <UserProfileMenu isOpen={isOpen} />
+      </div>
+
+      {/* 3. 교사 네비게이션 메뉴 */}
       <nav className="flex flex-col gap-2">
         {teacherMenuItems.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== '/teacher/dashboard' && pathname.startsWith(item.href));
+          const isActive = pathname === item.href;
 
           return (
             <Link
@@ -121,11 +118,6 @@ export default function TeacherSidebar() {
           );
         })}
       </nav>
-
-      {/* 3. 하단 교사 프로필 */}
-      <div className="mt-auto pt-6 border-t border-white/10">
-        <UserProfileMenu isOpen={isOpen} />
-      </div>
     </aside>
   );
 }

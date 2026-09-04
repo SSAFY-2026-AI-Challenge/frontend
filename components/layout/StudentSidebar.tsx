@@ -45,7 +45,7 @@ export default function StudentSidebar() {
     >
       {/* 1. 상단 SEED 로고 및 접기/펼치기 */}
       <div
-        className={`mb-8 flex items-center ${
+        className={`mb-5 flex items-center ${
           isOpen ? 'justify-between' : 'justify-center'
         }`}
       >
@@ -84,7 +84,12 @@ export default function StudentSidebar() {
         </button>
       </div>
 
-      {/* 2. 네비게이션 메뉴 */}
+      {/* 2. 상단 프로필 메뉴 (로고 바로 밑) */}
+      <div className="mb-6 pb-5 border-b border-white/10">
+        <UserProfileMenu isOpen={isOpen} />
+      </div>
+
+      {/* 3. 네비게이션 메뉴 */}
       <nav className="flex flex-col gap-2">
         {menuItems.map((item) => {
           const isActive =
@@ -121,11 +126,6 @@ export default function StudentSidebar() {
           );
         })}
       </nav>
-
-      {/* 3. 하단 내 프로필 */}
-      <div className="mt-auto pt-6 border-t border-white/10">
-        <UserProfileMenu isOpen={isOpen} />
-      </div>
     </aside>
   );
 }

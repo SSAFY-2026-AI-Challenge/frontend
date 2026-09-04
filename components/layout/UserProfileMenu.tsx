@@ -74,9 +74,11 @@ export default function UserProfileMenu({ isOpen }: UserProfileMenuProps) {
         title={!isOpen ? `${displayName} (${roleLabel})` : undefined}
         aria-expanded={isMenuOpen}
         aria-haspopup="true"
-        className={`group flex w-full items-center rounded-xl py-2.5 transition-all text-white/90 hover:bg-white/10 cursor-pointer ${
-          isOpen ? 'gap-3 px-3' : 'justify-center px-0'
-        } ${isMenuOpen ? 'bg-white/15' : ''}`}
+        className={`group flex w-full items-center rounded-2xl py-2.5 transition-all text-white/90 hover:bg-white/10 cursor-pointer ${
+          isOpen
+            ? 'gap-3 px-3 bg-white/5 border border-white/10'
+            : 'justify-center px-0'
+        } ${isMenuOpen ? 'ring-2 ring-emerald-400/40 bg-white/15' : ''}`}
       >
         <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-700/80 border border-emerald-400/40 p-1 transition-transform group-hover:scale-105">
           <Image
@@ -109,14 +111,14 @@ export default function UserProfileMenu({ isOpen }: UserProfileMenuProps) {
         )}
       </button>
 
-      {/* 2. 프로필 팝오버 메뉴 (사이드바 상단/측면 드롭다운) */}
+      {/* 2. 프로필 팝오버 메뉴 (사이드바 상단 드롭다운 / 접힘 시 우측 팝오버) */}
       {isMenuOpen && (
         <div
           role="menu"
-          className={`absolute z-50 mb-2 bottom-full rounded-2xl bg-[#0B4D3B] border border-white/15 p-3 text-white shadow-2xl backdrop-blur-md transition-all animate-in fade-in zoom-in-95 duration-150 ${
+          className={`absolute z-50 rounded-2xl bg-[#0B4D3B] border border-white/15 p-3 text-white shadow-2xl backdrop-blur-md transition-all animate-in fade-in zoom-in-95 duration-150 ${
             isOpen
-              ? 'left-0 right-0 min-w-[220px]'
-              : 'left-12 min-w-[200px]'
+              ? 'top-full left-0 right-0 mt-2 min-w-[220px]'
+              : 'top-0 left-16 min-w-[200px]'
           }`}
         >
           {/* 유저 기본 정보 헤더 */}

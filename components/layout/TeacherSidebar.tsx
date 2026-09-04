@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
+import UserProfileMenu from './UserProfileMenu';
 
 const teacherMenuItems = [
   {
@@ -123,26 +124,7 @@ export default function TeacherSidebar() {
 
       {/* 3. 하단 교사 프로필 */}
       <div className="mt-auto pt-6 border-t border-white/10">
-        <div
-          title={!isOpen ? '내 프로필' : undefined}
-          className={`flex items-center rounded-xl py-2.5 transition-colors text-white/90 ${
-            isOpen ? 'gap-3 px-3' : 'justify-center px-0'
-          }`}
-        >
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-700/80 border border-emerald-400/40 p-1">
-            <Image
-              src="/images/characters/sprout.svg"
-              alt="내 프로필"
-              width={28}
-              height={28}
-              className="h-full w-full object-contain"
-            />
-          </div>
-
-          {isOpen && (
-            <span className="text-sm font-medium text-white/90">내 프로필</span>
-          )}
-        </div>
+        <UserProfileMenu isOpen={isOpen} />
       </div>
     </aside>
   );

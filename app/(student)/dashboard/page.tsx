@@ -15,7 +15,6 @@ import {
   SproutCloverGraphic,
   FourLeafCloverGraphic,
   StemSproutGraphic,
-  JobClipboardGraphic,
 } from '@/components/common/FigmaGraphics';
 
 export default function DashboardPage() {
@@ -168,7 +167,14 @@ export default function DashboardPage() {
           </div>
 
           <div className="my-2 flex justify-center py-2">
-            <JobClipboardGraphic className="h-28 w-28" />
+            <Image
+              src="/objects/clean.svg"
+              alt={jobName}
+              width={120}
+              height={120}
+              priority
+              className="h-28 w-28 object-contain"
+            />
           </div>
 
           <Link href="/payroll" className="w-full">

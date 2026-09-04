@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import AuthGuard from '@/components/auth/AuthGuard';
 
 const onboardingSteps = [
   {
@@ -39,76 +40,93 @@ export default function OnboardingPage() {
   const stepInfo = onboardingSteps[currentStep];
 
   return (
-    <main
-      className="relative flex min-h-screen flex-col items-center justify-between bg-[#34C37D] px-4 py-8 md:py-12 bg-cover bg-center overflow-hidden select-none"
-      style={{
-        backgroundImage: "url('/backgrounds/green-pattern.svg')",
-      }}
-    >
-      {/* 상단 건너뛰기 버튼 */}
-      <div className="w-full max-w-2xl flex justify-end px-4">
-        <Link
-          href="/dashboard"
-          className="text-xs font-semibold text-white/80 hover:text-white transition-colors bg-white/10 hover:bg-white/20 rounded-full px-3 py-1 backdrop-blur-xs"
-        >
-          건너뛰기
-        </Link>
-      </div>
-
-      {/* 중앙: 3장 부채꼴 카드 일러스트레이션 */}
-      <div className="relative z-10 my-auto flex flex-col items-center justify-center w-full max-w-xl">
-        <div className="relative w-full max-w-[540px] drop-shadow-lg transition-transform duration-500">
-          <Image
-            src="/images/onboarding/onboarding_card.svg"
-            alt="온보딩 SEED 카드"
-            width={1000}
-            height={580}
-            priority
-            className="h-auto w-full object-contain"
-          />
+    <AuthGuard allowedRoles={['STUDENT']}>
+      <main
+        className="relative flex min-h-screen flex-col items-center justify-between bg-[#34C37D] px-4 py-8 md:py-12 bg-cover bg-center overflow-hidden select-none"
+        style={{
+          backgroundImage: "url('/backgrounds/green-pattern.svg')",
+        }}
+      >
+        {/* 상단 건너뛰기 버튼 */}
+        <div className="w-full max-w-2xl flex justify-end px-4">
+          <Link
+            href="/dashboard"
+            className="text-xs font-semibold text-white/80 hover:text-white transition-colors bg-white/10 hover:bg-white/20 rounded-full px-3 py-1 backdrop-blur-xs"
+          >
+            건너뛰기
+          </Link>
         </div>
 
-        {/* 인디케이터 (Dots & Pill) */}
-        <div className="mt-8 mb-6 flex items-center justify-center gap-1.5">
-          {onboardingSteps.map((_, idx) => {
-            const isActive = idx === currentStep;
-            return (
-              <button
+        {/* 중앙: 3장 부채꼴 카드 일러스트레이션 */}
+        <div className="relative z-10 my-auto flex flex-col items-center justify-center w-full max-w-xl">
+          <div className="relative w-full max-w-[540px] drop-shadow-lg transition-transform duration-500">
+            {/* 3단 카드 전환 표시 */}
+            {currentStep === 0 && (
+              <Image
+                src="/objects/onboarding-card-1.svg"
+                alt="직업과 소득"
+                width={540}
+                height={280}
+                priority
+                className="h-auto w-full object-contain animate-fade-in"
+              />
+            )}
+            {currentStep === 1 && (
+              <Image
+                src="/objects/onboarding-card-2.svg"
+                alt="자산 관리"
+                width={540}
+                height={280}
+                priority
+                className="h-auto w-full object-contain animate-fade-in"
+              />
+            )}
+            {currentStep === 2 && (
+              <Image
+                src="/objects/onboarding-card-3.svg"
+                alt="경제 성장"
+                width={540}
+                height={280}
+                priority
+                className="h-auto w-full object-contain animate-fade-in"
+              />
+            )}
+          </div>
+
+          {/* 스텝 인디케이터 (도트) */}
+          <div className="my-6 flex items-center justify-center gap-2">
+            {onboardingSteps.map((_, idx) => (
+              <span
                 key={idx}
-                type="button"
-                onClick={() => setCurrentStep(idx)}
-                aria-label={`${idx + 1}단계로 이동`}
-                className={`transition-all duration-300 cursor-pointer ${
-                  isActive
-                    ? 'h-1.5 w-6 rounded-full bg-white'
-                    : 'h-1.5 w-1.5 rounded-full bg-white/40 hover:bg-white/70'
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  idx === currentStep ? 'w-6 bg-white' : 'w-2 bg-white/40'
                 }`}
               />
-            );
-          })}
+            ))}
+          </div>
+
+          {/* 텍스트 영역 */}
+          <div className="text-center max-w-md px-2">
+            <h1 className="mb-2 text-xl md:text-2xl font-extrabold text-white tracking-tight animate-fade-in">
+              {stepInfo.title}
+            </h1>
+            <p className="text-xs md:text-sm text-white/90 leading-relaxed font-medium">
+              {stepInfo.description}
+            </p>
+          </div>
         </div>
 
-        {/* 텍스트 영역 */}
-        <div className="text-center max-w-md px-2">
-          <h1 className="mb-2 text-xl md:text-2xl font-extrabold text-white tracking-tight animate-fade-in">
-            {stepInfo.title}
-          </h1>
-          <p className="text-xs md:text-sm text-white/90 leading-relaxed font-medium">
-            {stepInfo.description}
-          </p>
+        {/* 하단 다음 / 시작 버튼 */}
+        <div className="relative z-10 w-full max-w-sm px-4">
+          <button
+            type="button"
+            onClick={handleNext}
+            className="w-full rounded-xl bg-white py-3.5 text-sm font-bold text-gray-900 shadow-md transition-all duration-150 hover:bg-gray-100 active:scale-[0.99] cursor-pointer text-center"
+          >
+            {stepInfo.buttonText}
+          </button>
         </div>
-      </div>
-
-      {/* 하단 다음 / 시작 버튼 */}
-      <div className="relative z-10 w-full max-w-sm px-4">
-        <button
-          type="button"
-          onClick={handleNext}
-          className="w-full rounded-xl bg-white py-3.5 text-sm font-bold text-gray-900 shadow-md transition-all duration-150 hover:bg-gray-100 active:scale-[0.99] cursor-pointer text-center"
-        >
-          {stepInfo.buttonText}
-        </button>
-      </div>
-    </main>
+      </main>
+    </AuthGuard>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSavingsSummary } from '@/features/savings/hooks/useSavingsSummary';
+import { useSavingsGoal } from '@/features/savings/hooks/useSavingsGoal';
 import { useSavingsTrends } from '@/features/savings/hooks/useSavingsTrends';
 import { useSavingsRecommendations } from '@/features/savings/hooks/useSavingsRecommendations';
 import { useSavingsTransfer } from '@/features/savings/hooks/useSavingsTransfer';
@@ -36,9 +37,37 @@ export default function SavingsPage() {
   const [txPage, setTxPage] = useState(1);
 
   const { data: summary } = useSavingsSummary();
+  const { data: goalData } = useSavingsGoal();
   const { data: trendsData } = useSavingsTrends();
   const { data: recommendations } = useSavingsRecommendations();
   const { data: accountsData } = useAccounts();
+
+  // 계좌 및 목표 DTO 매핑
+  const fromAccount =
+    accountsData?.find((acc) => acc.accountType === 'CHECKING') ||
+    accountsData?.[0];
+  const toAccount =
+    accountsData?.find(
+      (acc) =>
+        acc.accountType === 'SAVINGS' ||
+        acc.accountId !== fromAccount?.accountId,
+    ) || accountsData?.[1];
+
+  const fromAccountId = fromAccount?.accountId || 'ACC-CHECKING-001';
+  const toAccountId = toAccount?.accountId || 'ACC-SAVINGS-001';
+  const goalId = goalData?.goalId || goalData?.id || 'GOAL-001';
+
+  // 현재 저축액 및 목표 수치 계산
+  const totalSavings = summary?.totalSavings ?? 15200;
+  const targetAmount = goalData?.targetAmount || 30000;
+  const currentGoalAmount = goalData?.currentAmount ?? totalSavings;
+  const progressPercent =
+    goalData?.progressPercent ??
+    (targetAmount > 0
+      ? Math.min(Math.round((currentGoalAmount / targetAmount) * 100), 100)
+      : 0);
+  const goalTitle = goalData?.title || '30,000미소 저금';
+  const goalPeriod = goalData?.period || '2026.05.15';
 
   const lastDay = new Date(selectedYear, selectedMonth, 0).getDate();
   const fromDate = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-01`;
@@ -63,26 +92,42 @@ export default function SavingsPage() {
 
   const handleDeposit = () => {
     const amount = Number(depositAmount);
-    if (!amount || amount <= 0) return;
+    if (!amount || amount <= 0) {
+      setDepositErrorMsg('저축할 금액을 1 이상 입력해 주세요.');
+      return;
+    }
+
+    if (
+      fromAccount &&
+      fromAccount.balance !== undefined &&
+      amount > fromAccount.balance
+    ) {
+      setDepositErrorMsg(
+        `출금 가능 잔액(${fromAccount.balance.toLocaleString()} 미소)을 초과했습니다.`,
+      );
+      return;
+    }
 
     setDepositErrorMsg('');
     transferMutation.mutate(
       {
-        fromAccountId: accountsData?.[0]?.accountId || 'acc-1',
-        toAccountId: accountsData?.[1]?.accountId || 'acc-2',
+        fromAccountId,
+        toAccountId,
         amount,
-        goalId: 'goal-1',
+        goalId,
       },
       {
-        onSuccess: () => {
-          setDepositSuccessMsg(
-            `${amount.toLocaleString()} 미소가 성공적으로 저축되었습니다!`,
-          );
+        onSuccess: (res) => {
+          const successText =
+            res?.toAccountBalance !== undefined
+              ? `${res.amount.toLocaleString()} 미소가 성공적으로 저축되었습니다! (저축 잔액: ${res.toAccountBalance.toLocaleString()} 미소)`
+              : `${amount.toLocaleString()} 미소가 성공적으로 저축되었습니다!`;
+          setDepositSuccessMsg(successText);
           setTimeout(() => {
             setDepositSuccessMsg('');
             setIsDepositModalOpen(false);
             setDepositAmount('');
-          }, 1500);
+          }, 1800);
         },
         onError: (err: unknown) => {
           const msg =
@@ -188,9 +233,9 @@ export default function SavingsPage() {
                   나의 총 저축 금액
                 </p>
                 <div className="mb-2 flex flex-wrap items-center text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
-                  <span>나의 총 자산 합계는</span>
+                  <span>나의 총 저축액은</span>
                   <span className="mx-2.5 inline-flex items-center rounded-xl bg-[#35C884] px-3.5 py-0.5 text-xl md:text-2xl font-black text-white shadow-sm">
-                    {(summary?.totalSavings || 15200).toLocaleString()} 미소
+                    {totalSavings.toLocaleString()} 미소
                   </span>
                   <span>입니다</span>
                 </div>
@@ -278,46 +323,57 @@ export default function SavingsPage() {
                     나의 저축 목표 목록
                   </h3>
                   <p className="mt-1 text-[11px] text-gray-400">
-                    예상 달성일: 2026.05.15
+                    예상 달성일: {goalPeriod}
                   </p>
                 </div>
 
                 <div className="mb-6">
                   <span className="inline-flex rounded-lg bg-[#35C884] text-white text-xs font-bold px-3 py-1">
-                    30,000미소 저금
+                    {goalTitle}
                   </span>
                 </div>
 
                 {/* 프로그레스 바 & 말풍선 */}
                 <div className="relative pt-6 pb-2">
                   <div
-                    className="absolute -top-1 font-bold text-xs bg-emerald-100 text-[#0B654B] px-2 py-0.5 rounded-md shadow-xs"
-                    style={{ left: '65%' }}
+                    className="absolute -top-1 font-bold text-xs bg-emerald-100 text-[#0B654B] px-2 py-0.5 rounded-md shadow-xs transition-all duration-300"
+                    style={{
+                      left: `clamp(0%, ${Math.max(progressPercent - 4, 0)}%, 88%)`,
+                    }}
                   >
-                    70%
+                    {progressPercent}%
                   </div>
                   <div className="h-3 w-full rounded-full bg-gray-100 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-[#35C884] transition-all"
-                      style={{ width: '70%' }}
+                      className="h-full rounded-full bg-[#35C884] transition-all duration-500"
+                      style={{ width: `${progressPercent}%` }}
                     />
                   </div>
                 </div>
 
                 <div className="flex items-center justify-between text-xs font-bold mt-2">
                   <span className="text-[#0B654B]">
-                    현재 {(summary?.totalSavings || 15200).toLocaleString()}{' '}
-                    미소
+                    현재 {currentGoalAmount.toLocaleString()} 미소
                   </span>
-                  <span className="text-[#35C884]">목표 ₩30,000 미소</span>
+                  <span className="text-[#35C884]">
+                    목표 {targetAmount.toLocaleString()} 미소
+                  </span>
                 </div>
               </div>
 
               <div className="mt-8 pt-4 border-t border-gray-100">
                 <p className="text-xs text-gray-500">
-                  현재 속도를 유지하면 목표일보다{' '}
-                  <span className="font-bold text-[#0B654B]">2주 일찍</span>{' '}
-                  달성 가능해요!
+                  {progressPercent >= 100 ? (
+                    <span className="font-bold text-[#0B654B]">
+                      목표를 달성했어요! 축하합니다 🎉
+                    </span>
+                  ) : (
+                    <>
+                      현재 속도를 유지하면 목표일보다{' '}
+                      <span className="font-bold text-[#0B654B]">2주 일찍</span>{' '}
+                      달성 가능해요!
+                    </>
+                  )}
                 </p>
               </div>
             </Card>
@@ -721,14 +777,14 @@ export default function SavingsPage() {
       {/* 저축하기 모달 */}
       {isDepositModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl animate-in fade-in zoom-in-95 duration-150">
             <h3 className="text-lg font-bold text-gray-900 mb-2">저축하기</h3>
             <p className="text-xs text-gray-500 mb-4">
-              저축할 금액을 입력하면 목표 계좌로 이체됩니다.
+              출금 계좌에서 목표 저축 계좌로 미소를 이체합니다.
             </p>
 
             {depositSuccessMsg ? (
-              <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-center text-sm font-bold text-[#0B654B]">
+              <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-center text-sm font-bold text-[#0B654B] leading-relaxed">
                 {depositSuccessMsg}
               </div>
             ) : (
@@ -739,21 +795,80 @@ export default function SavingsPage() {
                   </div>
                 )}
 
+                {/* 계좌 요약 카드 */}
+                <div className="rounded-xl bg-gray-50 p-3.5 border border-gray-100 space-y-1.5 text-xs">
+                  <div className="flex justify-between items-center text-gray-500">
+                    <span>출금 계좌</span>
+                    <span className="font-bold text-gray-800">
+                      {fromAccount?.accountName || '보통 예금'}
+                      {fromAccount?.balance !== undefined && (
+                        <span className="text-gray-500 font-normal ml-1">
+                          (잔액: {fromAccount.balance.toLocaleString()} 미소)
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-500">
+                    <span>입금 계좌</span>
+                    <span className="font-bold text-[#0B654B]">
+                      {toAccount?.accountName || '저축 목표 통장'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-gray-500 pt-1 border-t border-gray-200/60">
+                    <span>저축 목표</span>
+                    <span className="font-semibold text-gray-700">
+                      {goalTitle}
+                    </span>
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">
-                    저축 금액 (미소)
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-gray-600">
+                      저축 금액 (미소)
+                    </label>
+                    {fromAccount?.balance !== undefined && (
+                      <span className="text-[11px] text-gray-400">
+                        최대 {fromAccount.balance.toLocaleString()} 미소
+                      </span>
+                    )}
+                  </div>
                   <input
                     type="number"
                     value={depositAmount}
                     onChange={(e) => setDepositAmount(e.target.value)}
-                    placeholder="예: 500"
+                    placeholder="예: 5000"
                     disabled={transferMutation.isPending}
-                    className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-[#35C884] disabled:opacity-50"
+                    className="w-full rounded-xl border border-gray-300 px-3.5 py-2.5 text-sm outline-none focus:border-[#35C884] focus:ring-2 focus:ring-[#35C884]/20 disabled:opacity-50"
                   />
+
+                  {/* 퀵 금액 버튼 */}
+                  <div className="flex gap-1.5 mt-2 flex-wrap">
+                    {[1000, 5000, 10000].map((amt) => (
+                      <button
+                        key={amt}
+                        type="button"
+                        onClick={() => setDepositAmount(String(amt))}
+                        className="rounded-lg border border-gray-200 bg-white px-2.5 py-1 text-[11px] font-semibold text-gray-600 hover:bg-gray-50 hover:border-emerald-300 transition-colors cursor-pointer"
+                      >
+                        +{amt.toLocaleString()}
+                      </button>
+                    ))}
+                    {fromAccount?.balance !== undefined && fromAccount.balance > 0 && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setDepositAmount(String(fromAccount.balance))
+                        }
+                        className="rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-[#0B654B] hover:bg-emerald-100 transition-colors cursor-pointer"
+                      >
+                        전액
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 pt-1">
                   <Button
                     variant="outline"
                     fullWidth

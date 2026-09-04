@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { logoutApi } from '@/features/auth/api';
@@ -19,13 +18,17 @@ export default function UserProfileMenu({ isOpen }: UserProfileMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const displayName = user?.name || (user?.role === 'TEACHER' ? '선생님' : '학생');
+  const initialChar = user?.name?.trim()?.[0] || (user?.role === 'TEACHER' ? '선' : '학');
   const roleLabel = user?.role === 'TEACHER' ? '교사' : '학생';
   const roleBadgeColor =
     user?.role === 'TEACHER'
       ? 'bg-amber-400/20 text-amber-200 border-amber-300/30'
       : 'bg-emerald-400/20 text-emerald-200 border-emerald-300/30';
+  const avatarBgColor =
+    user?.role === 'TEACHER'
+      ? 'bg-[#D97706] text-white border-amber-300/40'
+      : 'bg-[#2EB374] text-white border-emerald-300/40';
   const subInfo = user?.class || (user?.job ? user.job : roleLabel);
-  const avatarUrl = user?.avatar_url || '/images/characters/sprout.svg';
 
   // 외부 클릭 시 드롭다운 닫기
   useEffect(() => {
@@ -80,14 +83,10 @@ export default function UserProfileMenu({ isOpen }: UserProfileMenuProps) {
             : 'justify-center px-0'
         } ${isMenuOpen ? 'ring-2 ring-emerald-400/40 bg-white/15' : ''}`}
       >
-        <div className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-700/80 border border-emerald-400/40 p-1 transition-transform group-hover:scale-105">
-          <Image
-            src={avatarUrl}
-            alt={displayName}
-            width={28}
-            height={28}
-            className="h-full w-full object-contain"
-          />
+        <div
+          className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-black border shadow-xs transition-transform group-hover:scale-105 select-none ${avatarBgColor}`}
+        >
+          {initialChar}
         </div>
 
         {isOpen && (
@@ -123,14 +122,10 @@ export default function UserProfileMenu({ isOpen }: UserProfileMenuProps) {
         >
           {/* 유저 기본 정보 헤더 */}
           <div className="flex items-center gap-3 border-b border-white/10 pb-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-emerald-700 border border-emerald-400/40 p-1">
-              <Image
-                src={avatarUrl}
-                alt={displayName}
-                width={32}
-                height={32}
-                className="h-full w-full object-contain"
-              />
+            <div
+              className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-base font-black border shadow-sm select-none ${avatarBgColor}`}
+            >
+              {initialChar}
             </div>
             <div className="flex flex-col min-w-0 flex-1">
               <div className="flex items-center gap-1.5">

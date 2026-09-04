@@ -15,8 +15,8 @@ import {
   SproutCloverGraphic,
   FourLeafCloverGraphic,
   StemSproutGraphic,
-  JobClipboardGraphic,
 } from '@/components/common/FigmaGraphics';
+import ActivityLineChart from '@/features/dashboard/components/ActivityLineChart';
 
 export default function DashboardPage() {
   const {
@@ -167,8 +167,15 @@ export default function DashboardPage() {
             </span>
           </div>
 
-          <div className="my-2 flex justify-center py-2">
-            <JobClipboardGraphic className="h-28 w-28" />
+          <div className="my-1 flex justify-center items-center py-2">
+            <Image
+              src="/objects/clean.svg"
+              alt={jobName}
+              width={200}
+              height={200}
+              priority
+              className="h-36 w-36 md:h-44 md:w-44 object-contain transition-transform duration-300 hover:scale-105 drop-shadow-xs"
+            />
           </div>
 
           <Link href="/payroll" className="w-full">
@@ -189,8 +196,13 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="my-6 flex flex-col items-center justify-center gap-2">
-            <div className="h-16 w-16 opacity-0" />
+          <div className="my-4">
+            <ActivityLineChart
+              income={dashboard.incomeThisMonth}
+              expense={dashboard.expenseThisMonth}
+              totalAssets={dashboard.totalAssets}
+              period={dashboard.period || '8월'}
+            />
           </div>
 
           <div className="flex flex-col gap-3">

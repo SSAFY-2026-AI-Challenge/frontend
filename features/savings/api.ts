@@ -1,4 +1,4 @@
-import { apiFetch } from '@/lib/api/fetcher';
+import { apiFetch, ApiError } from '@/lib/api/fetcher';
 
 import type {
   SavingsGoal,
@@ -28,13 +28,23 @@ export async function getSavingsTrends(): Promise<SavingsTrendsResponse> {
   return { trends: [] };
 }
 
-export function transferSavings(
+export async function transferSavings(
   request: SavingsTransferRequest,
 ): Promise<SavingsTransferResponse> {
-  return apiFetch<SavingsTransferResponse>('/api/v1/savings/transfers', {
-    method: 'POST',
-    body: JSON.stringify(request),
-  });
+  try {
+    return await apiFetch<SavingsTransferResponse>('/api/v1/savings/transfers', {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  } catch (err: unknown) {
+    if (err instanceof ApiError && err.status === 404) {
+      return await apiFetch<SavingsTransferResponse>('/api/v1/transfers', {
+        method: 'POST',
+        body: JSON.stringify(request),
+      });
+    }
+    throw err;
+  }
 }
 
 export async function getSavingsRecommendations(): Promise<SavingsRecommendationResponse> {

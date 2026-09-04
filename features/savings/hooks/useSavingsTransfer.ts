@@ -21,6 +21,10 @@ export function useSavingsTransfer() {
       });
 
       queryClient.invalidateQueries({
+        queryKey: ['savings-goal'],
+      });
+
+      queryClient.invalidateQueries({
         queryKey: ['savings-trends'],
       });
 

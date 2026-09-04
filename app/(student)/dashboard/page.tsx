@@ -16,6 +16,7 @@ import {
   FourLeafCloverGraphic,
   StemSproutGraphic,
 } from '@/components/common/FigmaGraphics';
+import ActivityLineChart from '@/features/dashboard/components/ActivityLineChart';
 
 export default function DashboardPage() {
   const {
@@ -195,8 +196,13 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="my-6 flex flex-col items-center justify-center gap-2">
-            <div className="h-16 w-16 opacity-0" />
+          <div className="my-4">
+            <ActivityLineChart
+              income={dashboard.incomeThisMonth}
+              expense={dashboard.expenseThisMonth}
+              totalAssets={dashboard.totalAssets}
+              period={dashboard.period || '8월'}
+            />
           </div>
 
           <div className="flex flex-col gap-3">

@@ -167,14 +167,14 @@ export default function DashboardPage() {
             </span>
           </div>
 
-          <div className="my-2 flex justify-center py-2">
+          <div className="my-1 flex justify-center items-center py-2">
             <Image
               src="/objects/clean.svg"
               alt={jobName}
-              width={120}
-              height={120}
+              width={200}
+              height={200}
               priority
-              className="h-28 w-28 object-contain"
+              className="h-36 w-36 md:h-44 md:w-44 object-contain transition-transform duration-300 hover:scale-105 drop-shadow-xs"
             />
           </div>
 

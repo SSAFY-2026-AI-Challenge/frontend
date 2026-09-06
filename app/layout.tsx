@@ -4,8 +4,8 @@ import './globals.css';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: 'MVP',
-  description: 'MVP application',
+  title: 'SEED',
+  description: 'SEED application',
 };
 
 export default function RootLayout({

@@ -78,8 +78,8 @@ export type PolicySimulationRequest = {
 export type PolicyStateSnapshot = {
   moneySupply: number;
   totalConsumption: number;
-  inflationRate: number;
-  consumptionGrowthRate: number;
+  inflationRate: number | null;
+  consumptionGrowthRate: number | null;
   economicStatus: EconomicStatus;
 };
 export type PolicySimulationResponse = {

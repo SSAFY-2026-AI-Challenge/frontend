@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import PageHeader from '@/components/layout/PageHeader';
 import { CoinStackGraphic } from '@/components/common/FigmaGraphics';
+import type { PolicyStateSnapshot } from '@/features/teacher/types';
 import { useTeacherStore } from '@/stores/useTeacherStore';
 
 const statusName: Record<string, string> = {
@@ -138,19 +139,23 @@ function Snapshot({
   data,
 }: {
   title: string;
-  data: {
-    moneySupply: number;
-    totalConsumption: number;
-    inflationRate: number;
-    consumptionGrowthRate: number;
-    economicStatus: string;
-  };
+  data: PolicyStateSnapshot;
 }) {
   const rows = [
     ['총 통화량', `${data.moneySupply.toLocaleString()} 미소`],
     ['총 소비액', `${data.totalConsumption.toLocaleString()} 미소`],
-    ['물가 상승률', `${data.inflationRate}%`],
-    ['소비 증가율', `${data.consumptionGrowthRate}%`],
+    [
+      '물가 상승률',
+      data.inflationRate == null
+        ? '데이터 없음'
+        : `${data.inflationRate.toFixed(2)}%`,
+    ],
+    [
+      '소비 증가율',
+      data.consumptionGrowthRate == null
+        ? '데이터 없음'
+        : `${data.consumptionGrowthRate.toFixed(2)}%`,
+    ],
   ];
   return (
     <Card className="p-5">

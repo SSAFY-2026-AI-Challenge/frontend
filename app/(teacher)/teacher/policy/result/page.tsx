@@ -7,6 +7,7 @@ import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import PageHeader from '@/components/layout/PageHeader';
 import { CoinStackGraphic } from '@/components/common/FigmaGraphics';
+import type { PolicyStateSnapshot } from '@/features/teacher/types';
 import { useTeacherStore } from '@/stores/useTeacherStore';
 
 const statusName: Record<string, string> = {
@@ -73,16 +74,35 @@ export default function PolicyResultPage() {
       <Card className="mb-3 p-5">
         <h2 className="font-extrabold">경제 상황이</h2>
         <p className="mt-3 text-lg font-bold">
-          <Badge variant="danger-pill">
+          <Badge
+            variant={
+              simulation.before.economicStatus === 'STABLE' ||
+              simulation.before.economicStatus === 'EXPANSION'
+                ? 'green-pill'
+                : 'danger-pill'
+            }
+          >
             {statusName[simulation.before.economicStatus] ??
               simulation.before.economicStatus}
           </Badge>
           <span className="mx-2">에서</span>
-          <Badge variant="green-pill">
+          <Badge
+            variant={
+              simulation.after.economicStatus === 'STABLE' ||
+              simulation.after.economicStatus === 'EXPANSION'
+                ? 'green-pill'
+                : 'danger-pill'
+            }
+          >
             {statusName[simulation.after.economicStatus] ??
               simulation.after.economicStatus}
           </Badge>
-          <span className="ml-2">으로 변화할 것으로 예측됩니다.</span>
+          <span className="ml-2">
+            {simulation.before.economicStatus ===
+            simulation.after.economicStatus
+              ? '으로 유지될 것으로 예측됩니다.'
+              : '으로 변화할 것으로 예측됩니다.'}
+          </span>
         </p>
       </Card>
       <Card className="mb-4 p-5">
@@ -95,7 +115,9 @@ export default function PolicyResultPage() {
               key={change}
               className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700"
             >
-              {change}
+              {change.replace(/-?\d+\.\d+/g, (value) =>
+                Number(value).toFixed(2),
+              )}
             </span>
           ))}
         </div>
@@ -119,19 +141,23 @@ function Snapshot({
   data,
 }: {
   title: string;
-  data: {
-    moneySupply: number;
-    totalConsumption: number;
-    inflationRate: number;
-    consumptionGrowthRate: number;
-    economicStatus: string;
-  };
+  data: PolicyStateSnapshot;
 }) {
   const rows = [
     ['총 통화량', `${data.moneySupply.toLocaleString()} 미소`],
     ['총 소비액', `${data.totalConsumption.toLocaleString()} 미소`],
-    ['물가 상승률', `${data.inflationRate}%`],
-    ['소비 증가율', `${data.consumptionGrowthRate}%`],
+    [
+      '물가 상승률',
+      data.inflationRate == null
+        ? '데이터 없음'
+        : `${data.inflationRate.toFixed(2)}%`,
+    ],
+    [
+      '소비 증가율',
+      data.consumptionGrowthRate == null
+        ? '데이터 없음'
+        : `${data.consumptionGrowthRate.toFixed(2)}%`,
+    ],
   ];
   return (
     <Card className="p-5">

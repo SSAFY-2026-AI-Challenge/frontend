@@ -1,7 +1,8 @@
 'use client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { ApiError } from '@/lib/api/fetcher';
 
 type ProvidersProps = {
@@ -9,6 +10,19 @@ type ProvidersProps = {
 };
 
 export function Providers({ children }: ProvidersProps) {
+  useEffect(() => {
+    void Promise.resolve(useAuthStore.persist.rehydrate()).finally(() => {
+      const state = useAuthStore.getState();
+      if (
+        !state.token ||
+        !state.user ||
+        !['STUDENT', 'TEACHER'].includes(state.user.role?.toUpperCase())
+      ) {
+        state.logout();
+      }
+      state.setHydrated(true);
+    });
+  }, []);
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -29,7 +43,7 @@ export function Providers({ children }: ProvidersProps) {
             staleTime: 1000 * 30, // 30초 동안 캐시 신선 유지
           },
         },
-      })
+      }),
   );
 
   return (

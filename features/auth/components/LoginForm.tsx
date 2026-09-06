@@ -9,7 +9,7 @@ import { loginApi } from '../api';
 
 export default function LoginForm() {
   const router = useRouter();
-  const { isAuthenticated, user, isHydrated } = useAuthStore();
+  const { isAuthenticated, user, token, isHydrated } = useAuthStore();
 
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
@@ -20,14 +20,14 @@ export default function LoginForm() {
   useEffect(() => {
     if (!isHydrated) return;
 
-    if (isAuthenticated && user) {
+    if (isAuthenticated && token && user) {
       if (user.role?.toUpperCase() === 'TEACHER') {
         router.replace('/teacher/dashboard');
       } else {
         router.replace('/dashboard');
       }
     }
-  }, [isAuthenticated, user, isHydrated, router]);
+  }, [isAuthenticated, user, token, isHydrated, router]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,7 +66,9 @@ export default function LoginForm() {
     } catch (err: unknown) {
       const message =
         err instanceof Error
-          ? err.message
+          ? err.name === 'TimeoutError'
+            ? '서버 응답이 지연되고 있습니다. 잠시 후 다시 로그인해 주세요.'
+            : err.message
           : '로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.';
       setErrorMessage(message);
     } finally {

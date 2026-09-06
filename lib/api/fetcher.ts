@@ -1,3 +1,5 @@
+import { useAuthStore } from '@/stores/useAuthStore';
+
 export class ApiError extends Error {
   status: number;
   code?: string;
@@ -23,9 +25,17 @@ export async function apiFetch<T>(
   const cleanBase = rawBase.trim().replace(/\/+$/, '');
   let cleanPath = path.trim().replace(/^\/+/, '');
 
-  if (cleanBase.endsWith('/api/v1') && cleanPath.startsWith('api/v1/')) {
+  if (
+    !isBrowser &&
+    cleanBase.endsWith('/api/v1') &&
+    cleanPath.startsWith('api/v1/')
+  ) {
     cleanPath = cleanPath.slice(7);
-  } else if (cleanBase.endsWith('/api') && cleanPath.startsWith('api/')) {
+  } else if (
+    !isBrowser &&
+    cleanBase.endsWith('/api') &&
+    cleanPath.startsWith('api/')
+  ) {
     cleanPath = cleanPath.slice(4);
   }
 
@@ -34,8 +44,8 @@ export async function apiFetch<T>(
   const url = isBrowser
     ? `/${cleanPath}`
     : cleanBase
-    ? `${cleanBase}/${cleanPath}`
-    : `/${cleanPath}`;
+      ? `${cleanBase}/${cleanPath}`
+      : `/${cleanPath}`;
 
   const headers = new Headers(options.headers);
 
@@ -47,10 +57,7 @@ export async function apiFetch<T>(
 
   // 클라이언트 환경에서 토큰 자동 첨부
   if (typeof window !== 'undefined' && !headers.has('Authorization')) {
-    const token =
-      localStorage.getItem('accessToken') ||
-      localStorage.getItem('token') ||
-      sessionStorage.getItem('accessToken');
+    const token = useAuthStore.getState().token;
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
     }
@@ -60,6 +67,7 @@ export async function apiFetch<T>(
     credentials: options.credentials ?? 'include',
     ...options,
     headers,
+    signal: options.signal ?? AbortSignal.timeout(30000),
   });
 
   if (!response.ok) {
@@ -67,13 +75,7 @@ export async function apiFetch<T>(
       const isAuthEndpoint =
         cleanPath.includes('login') || cleanPath.includes('logout');
       if (!isAuthEndpoint) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('token');
-        sessionStorage.removeItem('accessToken');
-        if (typeof document !== 'undefined') {
-          document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
-          document.cookie = 'seed_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
-        }
+        useAuthStore.getState().logout();
         if (window.location.pathname !== '/') {
           // eslint-disable-next-line @next/next/no-location-assign-relative-destination
           window.location.href = '/';
@@ -119,5 +121,5 @@ export async function apiFetch<T>(
   }
 
   const text = await response.text();
-  return (text ? (text as unknown as T) : (undefined as T));
+  return text ? (text as unknown as T) : (undefined as T);
 }

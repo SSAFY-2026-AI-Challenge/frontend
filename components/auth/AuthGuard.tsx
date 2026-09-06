@@ -19,22 +19,21 @@ export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     allowedRoles.length === 0 ||
     Boolean(
       currentRole &&
-        allowedRoles.some((role) => role.toUpperCase() === currentRole)
+      allowedRoles.some((role) => role.toUpperCase() === currentRole),
     );
 
   const isAuthorized =
-    isHydrated && isAuthenticated && Boolean(token) && Boolean(user) && hasRolePermission;
+    isHydrated &&
+    isAuthenticated &&
+    Boolean(token) &&
+    Boolean(user) &&
+    hasRolePermission;
 
   useEffect(() => {
     if (!isHydrated) return;
 
-    const storedToken =
-      typeof window !== 'undefined'
-        ? localStorage.getItem('accessToken') || token
-        : token;
-
     // 1. 비로그인 상태 체크
-    if (!isAuthenticated || !storedToken || !user) {
+    if (!isAuthenticated || !token || !user) {
       router.replace('/');
       return;
     }
@@ -43,8 +42,11 @@ export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     if (allowedRoles && allowedRoles.length > 0 && !hasRolePermission) {
       if (currentRole === 'TEACHER') {
         router.replace('/teacher/dashboard');
-      } else {
+      } else if (currentRole === 'STUDENT') {
         router.replace('/dashboard');
+      } else {
+        useAuthStore.getState().logout();
+        router.replace('/');
       }
     }
   }, [
@@ -74,4 +76,3 @@ export default function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
 
   return <>{children}</>;
 }
-

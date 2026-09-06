@@ -115,7 +115,9 @@ export default function PolicyResultPage() {
               key={change}
               className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700"
             >
-              {change}
+              {change.replace(/-?\d+\.\d+/g, (value) =>
+                Number(value).toFixed(2),
+              )}
             </span>
           ))}
         </div>

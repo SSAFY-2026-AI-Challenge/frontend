@@ -23,6 +23,13 @@ const statusName: Record<string, string> = {
   INFLATION: '인플레이션',
   DEFLATION: '디플레이션',
 };
+const statusColor: Record<string, string> = {
+  CONTRACTION: 'bg-red-500',
+  EXPANSION: 'bg-emerald-500',
+  STABLE: 'bg-emerald-500',
+  INFLATION: 'bg-red-500',
+  DEFLATION: 'bg-red-500',
+};
 
 export default function TeacherPolicyPage() {
   const router = useRouter();
@@ -68,9 +75,12 @@ export default function TeacherPolicyPage() {
               <h1 className="text-xl font-extrabold">
                 인공지능 거시 경제 상태 판정 결과
                 <br />
-                <span className="mt-2 inline-block rounded-lg bg-emerald-500 px-3 py-1 text-base text-white">
-                  {statusName[analysis?.economicStatus ?? 'STABLE'] ??
-                    analysis?.economicStatus}
+                <span
+                  className={`mt-2 inline-block rounded-lg px-3 py-1 text-base text-white ${statusColor[analysis?.economicStatus ?? ''] ?? 'bg-gray-500'}`}
+                >
+                  {statusName[analysis?.economicStatus ?? ''] ??
+                    analysis?.economicStatus ??
+                    '분석 전'}
                 </span>{' '}
                 입니다
               </h1>
@@ -82,7 +92,13 @@ export default function TeacherPolicyPage() {
           </div>
           <div className="hidden text-right md:block">
             <span className="rounded-lg bg-gray-700 px-3 py-1 text-xs font-bold text-white">
-              주의 요함
+              {analysis?.economicStatus === 'STABLE' ||
+              analysis?.economicStatus === 'EXPANSION'
+                ? '양호'
+                : analysis?.economicStatus &&
+                    statusColor[analysis.economicStatus]
+                  ? '주의 요함'
+                  : '분석 확인 필요'}
             </span>
             <Image
               src="/images/characters/sprout.svg"

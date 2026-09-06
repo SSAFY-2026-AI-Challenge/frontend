@@ -73,16 +73,35 @@ export default function PolicyResultPage() {
       <Card className="mb-3 p-5">
         <h2 className="font-extrabold">경제 상황이</h2>
         <p className="mt-3 text-lg font-bold">
-          <Badge variant="danger-pill">
+          <Badge
+            variant={
+              simulation.before.economicStatus === 'STABLE' ||
+              simulation.before.economicStatus === 'EXPANSION'
+                ? 'green-pill'
+                : 'danger-pill'
+            }
+          >
             {statusName[simulation.before.economicStatus] ??
               simulation.before.economicStatus}
           </Badge>
           <span className="mx-2">에서</span>
-          <Badge variant="green-pill">
+          <Badge
+            variant={
+              simulation.after.economicStatus === 'STABLE' ||
+              simulation.after.economicStatus === 'EXPANSION'
+                ? 'green-pill'
+                : 'danger-pill'
+            }
+          >
             {statusName[simulation.after.economicStatus] ??
               simulation.after.economicStatus}
           </Badge>
-          <span className="ml-2">으로 변화할 것으로 예측됩니다.</span>
+          <span className="ml-2">
+            {simulation.before.economicStatus ===
+            simulation.after.economicStatus
+              ? '으로 유지될 것으로 예측됩니다.'
+              : '으로 변화할 것으로 예측됩니다.'}
+          </span>
         </p>
       </Card>
       <Card className="mb-4 p-5">

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { authStorage } from '@/lib/auth-storage';
 
 export type UserRole = 'STUDENT' | 'TEACHER';
 
@@ -33,8 +34,10 @@ const setAuthCookies = (token: string, role: string) => {
 
 const clearAuthCookies = () => {
   if (typeof document === 'undefined') return;
-  document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
-  document.cookie = 'seed_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+  document.cookie =
+    'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
+  document.cookie =
+    'seed_role=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax';
 };
 
 export const useAuthStore = create<AuthState>()(
@@ -47,7 +50,7 @@ export const useAuthStore = create<AuthState>()(
 
       login: (token: string, user: AuthUser) => {
         if (typeof window !== 'undefined') {
-          localStorage.setItem('accessToken', token);
+          authStorage.setItem('accessToken', token);
           setAuthCookies(token, user.role);
         }
 
@@ -71,9 +74,13 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('token');
-          sessionStorage.removeItem('accessToken');
+          authStorage.removeItem('accessToken');
+          authStorage.removeItem('token');
+          try {
+            sessionStorage.removeItem('accessToken');
+          } catch {
+            /* Storage unavailable. */
+          }
           clearAuthCookies();
         }
         set({
@@ -87,14 +94,13 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'seed-auth-storage',
+      storage: createJSONStorage(() => authStorage),
+      skipHydration: true,
       partialize: (state) => ({
         isAuthenticated: state.isAuthenticated,
         user: state.user,
         token: state.token,
       }),
-      onRehydrateStorage: () => (state) => {
-        state?.setHydrated(true);
-      },
-    }
-  )
+    },
+  ),
 );

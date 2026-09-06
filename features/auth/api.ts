@@ -44,6 +44,16 @@ export async function loginApi(request: LoginRequest): Promise<LoginResponse> {
     }
   }
 
+  if (
+    !response?.accessToken ||
+    !response?.user ||
+    !['STUDENT', 'TEACHER'].includes(response.user.role?.toUpperCase())
+  ) {
+    throw new Error(
+      '로그인 응답의 사용자 정보를 확인할 수 없습니다. 다시 시도해 주세요.',
+    );
+  }
+
   if (response?.accessToken && response?.user) {
     useAuthStore.getState().login(response.accessToken, response.user);
   }
@@ -81,4 +91,3 @@ export async function getMe(): Promise<AuthUser> {
   }
   return res as AuthUser;
 }
-

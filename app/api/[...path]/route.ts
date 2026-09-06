@@ -7,12 +7,15 @@ function getBackendBaseUrl(): string {
     process.env.NEXT_PUBLIC_API_BASE_URL ||
     'http://localhost:8080';
 
-  return raw.trim().replace(/\/+$/, '').replace(/\/api(\/v1)?$/, '');
+  return raw
+    .trim()
+    .replace(/\/+$/, '')
+    .replace(/\/api(\/v1)?$/, '');
 }
 
 async function proxyHandler(
   request: NextRequest,
-  context: { params: Promise<{ path: string[] }> }
+  context: { params: Promise<{ path: string[] }> },
 ) {
   const { path } = await context.params;
   const subPath = path.join('/');
@@ -26,12 +29,9 @@ async function proxyHandler(
   request.headers.forEach((value, key) => {
     const lower = key.toLowerCase();
     if (
-      ![
-        'host',
-        'connection',
-        'content-length',
-        'accept-encoding',
-      ].includes(lower)
+      !['host', 'connection', 'content-length', 'accept-encoding'].includes(
+        lower,
+      )
     ) {
       forwardHeaders.set(key, value);
     }
@@ -54,6 +54,7 @@ async function proxyHandler(
       headers: forwardHeaders,
       body,
       redirect: 'manual',
+      signal: AbortSignal.timeout(25000),
     });
 
     const text = await backendResponse.text();
@@ -92,7 +93,7 @@ async function proxyHandler(
         error: err instanceof Error ? err.message : String(err),
         targetUrl,
       },
-      { status: 502 }
+      { status: 502 },
     );
   }
 }

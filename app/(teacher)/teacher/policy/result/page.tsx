@@ -148,14 +148,12 @@ function Snapshot({
     ['총 소비액', `${data.totalConsumption.toLocaleString()} 미소`],
     [
       '물가 상승률',
-      data.inflationRate == null
-        ? '데이터 없음'
-        : `${data.inflationRate.toFixed(2)}%`,
+      data.inflationRate == null ? '0%' : `${data.inflationRate.toFixed(2)}%`,
     ],
     [
       '소비 증가율',
       data.consumptionGrowthRate == null
-        ? '데이터 없음'
+        ? '0%'
         : `${data.consumptionGrowthRate.toFixed(2)}%`,
     ],
   ];

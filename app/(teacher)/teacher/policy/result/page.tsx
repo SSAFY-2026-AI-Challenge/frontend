@@ -11,12 +11,23 @@ import type { PolicyStateSnapshot } from '@/features/teacher/types';
 import { useTeacherStore } from '@/stores/useTeacherStore';
 
 const statusName: Record<string, string> = {
-  CONTRACTION: '경기 위축',
-  EXPANSION: '경기 활성',
-  STABLE: '정상',
-  INFLATION: '인플레이션',
-  DEFLATION: '디플레이션',
+  CONTRACTION: '수축 국면',
+  EXPANSION: '확장 국면',
+  STABLE: '안정 국면',
+  INFLATION: '물가 상승 국면',
+  DEFLATION: '물가 하락 국면',
 };
+
+function formatSimulationChange(change: string) {
+  return change
+    .replace(/경제\s*상태가/g, '경제 상황이')
+    .replace(
+      /\b(CONTRACTION|EXPANSION|STABLE|INFLATION|DEFLATION)\b(으?로)?/g,
+      (_, status: string, particle: string | undefined) =>
+        `${statusName[status]}${particle ? '으로' : ''}`,
+    )
+    .replace(/-?\d+\.\d+/g, (value) => Number(value).toFixed(2));
+}
 
 export default function PolicyResultPage() {
   const { selectedProposal, simulation, resetPolicy } = useTeacherStore();
@@ -115,9 +126,7 @@ export default function PolicyResultPage() {
               key={change}
               className="rounded-full border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700"
             >
-              {change.replace(/-?\d+\.\d+/g, (value) =>
-                Number(value).toFixed(2),
-              )}
+              {formatSimulationChange(change)}
             </span>
           ))}
         </div>
